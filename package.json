@@ -25,6 +25,6 @@
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
-    "codeglue": "^1.2.1"
+    "codeglue": "^1.2.4"
   }
 }

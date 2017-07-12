@@ -1,9 +1,7 @@
 import * as Pixi from "pixi.js"
 
 import Player from "scripts/Player.js"
-
-const WIDTH = 160 * 2
-const HEIGHT = 90 * 2
+import {WIDTH, HEIGHT} from "scripts/Constants.js"
 
 export default class Game extends Pixi.Container {
     constructor() {
