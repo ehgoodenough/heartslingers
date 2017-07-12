@@ -19,8 +19,9 @@
   "dependencies": {
     "keyb": "^1.1.0",
     "pixi.js": "^4.5.3",
+    "query-string": "^4.3.4",
     "statgrab": "^1.2.0",
-    "yaafloop": "^1.0.0"
+    "yaafloop": "^1.1.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
