@@ -19,3 +19,5 @@ if(STAGE === "PRODUCTION") {
         new Audio(require("music/procrastinator-elevator.mp3")),
     ])
 }
+
+import * as Pixi from "pixi.js"
