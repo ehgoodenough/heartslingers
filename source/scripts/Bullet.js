@@ -6,6 +6,8 @@ const FRICTION = 0.9
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xFC2E6C
 
+const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
+
 export default class Bullet extends Pixi.Sprite {
     constructor(protobullet) {
         super(HEART_TEXTURE)
@@ -21,10 +23,17 @@ export default class Bullet extends Pixi.Sprite {
 
         this.speed = protobullet.speed || 5
 
+        this.rotation = Math.PI * 2 * Math.random()
+
         // The duration of time
         // that this bullet has
         // been alive, in ms.
         this.time = 0
+
+        SHOOT_SOUND.volume = 0.1
+        SHOOT_SOUND.currentTime = 0
+        SHOOT_SOUND.playbackRate = Math.random() * 0.5 + 0.5
+        SHOOT_SOUND.play()
     }
     update(delta) {
         this.time += delta.ms
@@ -59,6 +68,8 @@ export default class Bullet extends Pixi.Sprite {
 
         this.position.x += Math.sin(this.direction) * this.speed * delta.f
         this.position.y += Math.cos(this.direction) * this.speed * delta.f
+
+        this.rotation -= (Math.PI / 32) * this.speed
     }
     collideWithBaddies() {
         // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/4
