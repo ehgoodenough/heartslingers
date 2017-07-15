@@ -93,12 +93,16 @@ export default class Player extends Pixi.Sprite {
             }
         }
     }
-    loseHeart(damage) {
-        damage = damage || 1
-        this.hearts -= damage
+    loseHeart(amount) {
+        amount = amount || 1
+        this.hearts -= amount
         if(this.hearts <= 0) {
             this.hearts = 0
             // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/7
         }
+    }
+    gainHeart(amount) {
+        amount = amount || 1
+        this.hearts += amount
     }
 }

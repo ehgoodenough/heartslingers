@@ -2,11 +2,15 @@ import * as Pixi from "pixi.js"
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
 const FRICTION = 0.9
+const GRAB_DISTANCE = 15
+
+const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
+const PICKUP_SOUND = new Audio(require("sounds/pickup2.wav"))
 
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xFC2E6C
 
-const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
+import {getDistance} from "scripts/Geometry.js"
 
 export default class Bullet extends Pixi.Sprite {
     constructor(protobullet) {
@@ -82,6 +86,15 @@ export default class Bullet extends Pixi.Sprite {
         if(this.parent != undefined
         && this.parent.player != undefined) {
             // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/5
+
+            if(getDistance(this.position, this.parent.player.position) < GRAB_DISTANCE) {
+                this.parent.player.gainHeart()
+                this.parent.removeChild(this)
+
+                PICKUP_SOUND.volume = 0.1
+                PICKUP_SOUND.currentTime = 0
+                PICKUP_SOUND.play()
+            }
         }
     }
 }
