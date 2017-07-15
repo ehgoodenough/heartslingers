@@ -2,7 +2,6 @@ import * as Pixi from "pixi.js"
 
 import Game from "scripts/Game.js"
 import Player from "scripts/Player.js"
-import HeartBar from "scripts/HeartBar.js"
 import {FRAME, STAGE} from "scripts/Constants.js"
 
 export default class Scene extends Pixi.Container {
@@ -10,7 +9,8 @@ export default class Scene extends Pixi.Container {
         super()
 
         this.addChild(this.player = new Player())
-        this.addChild(new HeartBar())
+
+        this.targetposition = new Pixi.Point()
     }
     update(delta) {
         this.children.forEach((child) => {
@@ -18,6 +18,15 @@ export default class Scene extends Pixi.Container {
                 child.update(delta)
             }
         })
+
+        this.moveCamera()
+    }
+    moveCamera() {
+        this.targetposition.x = -1 * (this.player.position.x - (FRAME.WIDTH / 2))
+        this.targetposition.y = -1 * (this.player.position.y - (FRAME.HEIGHT / 2))
+
+        // this.position.x += (this.targetposition.x - this.position.x) / 25
+        this.position.y += (this.targetposition.y - this.position.y) / 25
     }
     restartScene() {
         if(this.parent instanceof Game) {

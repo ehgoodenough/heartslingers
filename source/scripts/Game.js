@@ -1,6 +1,7 @@
 import * as Pixi from "pixi.js"
 
 import Scene from "scripts/Scene.js"
+import HeartBar from "scripts/HeartBar.js"
 import {FRAME, STAGE} from "scripts/Constants.js"
 
 export default class Game extends Pixi.Container {
@@ -23,6 +24,7 @@ export default class Game extends Pixi.Container {
 
         // Start the scene!!
         this.addChild(this.scene = new Scene())
+        this.addChild(new HeartBar())
     }
     update(delta) {
         this.children.forEach((child) => {
