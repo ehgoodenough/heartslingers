@@ -5,7 +5,7 @@ const FRICTION = 0.9
 const GRAB_DISTANCE = 15
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
-const PICKUP_SOUND = new Audio(require("sounds/pickup2.wav"))
+const PICKUP_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xFC2E6C
