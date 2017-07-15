@@ -29,6 +29,8 @@ export default class Bullet extends Pixi.Sprite {
 
         this.rotation = Math.PI * 2 * Math.random()
 
+        this.harm = 1
+
         // The duration of time
         // that this bullet has
         // been alive, in ms.
