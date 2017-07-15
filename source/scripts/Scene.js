@@ -24,7 +24,7 @@ export default class Scene extends Pixi.Container {
     }
     moveCamera() {
         this.targetposition.x = -1 * (this.player.position.x - (FRAME.WIDTH / 2))
-        this.targetposition.y = -1 * (this.player.position.y - (FRAME.HEIGHT / 2))
+        this.targetposition.y = -1 * (this.player.position.y - (FRAME.HEIGHT * (2/3)))
 
         // this.position.x += (this.targetposition.x - this.position.x) / 25
         this.position.y += (this.targetposition.y - this.position.y) / 25

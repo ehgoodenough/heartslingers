@@ -23,6 +23,6 @@ export const STAGE = stage
 
 export const FRAME = {
     WIDTH: 320,
-    HEIGHT: 180,
+    HEIGHT: 240,
     COLOR: 0x00BFFE
 }
