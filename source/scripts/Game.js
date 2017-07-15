@@ -1,24 +1,17 @@
 import * as Pixi from "pixi.js"
 
-import Player from "scripts/Player.js"
-import Text from "scripts/Text.js"
+import Scene from "scripts/Scene.js"
 import {FRAME, STAGE} from "scripts/Constants.js"
-import HeartBar from "scripts/HeartBar.js"
 
 export default class Game extends Pixi.Container {
     constructor() {
         super()
 
+        // Instantiate the Pixi renderer.
         this.renderer = Pixi.autoDetectRenderer({
             width: FRAME.WIDTH, height: FRAME.HEIGHT,
-            backgroundColor: 0x00BFFE
+            backgroundColor: FRAME.COLOR
         })
-
-        Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
-
-        this.addChild(this.player = new Player())
-
-        this.addChild(new HeartBar())
 
         // If we're still in the
         // development stage, then
@@ -27,6 +20,9 @@ export default class Game extends Pixi.Container {
         if(STAGE === "DEVELOPMENT") {
             window.game = this
         }
+
+        // Start the scene!!
+        this.addChild(this.scene = new Scene())
     }
     update(delta) {
         this.children.forEach((child) => {

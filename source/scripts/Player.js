@@ -4,6 +4,8 @@ import Keyb from "keyb"
 import {getVectorLength} from "scripts/Geometry.js"
 import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
+import Scene from "scripts/Scene.js"
+import Text from "scripts/Text.js"
 
 const FRICTION = 0.75
 const FRICTION_FALLTIME = 15 // in ticks (=1/60 of a second)
@@ -11,14 +13,13 @@ const MOVING_RISETIME  = 5 // in ticks (=1/60 of a second)
 const GUN_COOLDOWN = 150 // in milliseconds
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
-const TEXTURE = Pixi.Texture.from(require("images/pixel.png"))
+const PLAYER_TEXTURE = Pixi.Texture.from(require("images/player.png"))
+
+const DEATH_SOUND = new Audio(require("sounds/death.wav"))
 
 export default class Player extends Pixi.Sprite {
     constructor() {
-        super(TEXTURE)
-
-        this.width = 18
-        this.height = 18
+        super(PLAYER_TEXTURE)
 
         this.position.x = FRAME.WIDTH / 2
         this.position.y = FRAME.HEIGHT / 2
@@ -47,11 +48,15 @@ export default class Player extends Pixi.Sprite {
             cooldown: 0,
         }
 
-        this.hearts = 100
+        this.hearts = 25
     }
     update(delta) {
-        this.move(delta)
-        this.shoot(delta)
+        if(this.isDead) {
+            this.spinWhenDead(delta)
+        } else {
+            this.move(delta)
+            this.shoot(delta)
+        }
     }
     move(delta) {
         // Movement from input.
@@ -130,16 +135,54 @@ export default class Player extends Pixi.Sprite {
             }
         }
     }
+    spinWhenDead(delta) {
+        this.rotation += this.velocity * delta.f
+
+        this.velocity *= 0.95
+
+        if(this.velocity <= 0.0005) {
+            this.velocity = 0
+        }
+
+        if(this.velocity === 0) {
+            if(this.isTrulyDead != true) {
+                this.isTrulyDead = true
+
+                this.tint = 0x333333
+
+                if(this.parent != undefined) {
+                    var text = new Text("Hit R to restart")
+                    text.position.y = this.position.y - (this.height * 1.5)
+                    text.position.x = this.position.x
+                    this.parent.addChild(text)
+                }
+            }
+        }
+
+        if(Keyb.isJustDown("R", delta.ms)) {
+            if(this.parent instanceof Scene) {
+                this.parent.restartScene()
+            }
+        }
+    }
     loseHeart(amount) {
         amount = amount || 1
         this.hearts -= amount
         if(this.hearts <= 0) {
             this.hearts = 0
-            // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/7
+            this.die()
         }
     }
     gainHeart(amount) {
         amount = amount || 1
         this.hearts += amount
+    }
+    die() {
+        this.isDead = true
+        this.velocity = Math.PI / 4
+
+        DEATH_SOUND.volume = 0.1
+        DEATH_SOUND.currentTime = 0
+        DEATH_SOUND.play()
     }
 }
