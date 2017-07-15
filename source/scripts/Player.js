@@ -1,18 +1,17 @@
 import * as Pixi from "pixi.js"
 import Keyb from "keyb"
 
+import {getVectorLength} from "scripts/Geometry.js"
 import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 
 const FRICTION = 0.75
-const FRICTION_FALLTIME = 10 // in ticks (=1/60 of a second)
-const WALKING_RISETIME  = 10 // in ticks (=1/60 of a second)
+const FRICTION_FALLTIME = 15 // in ticks (=1/60 of a second)
+const MOVING_RISETIME  = 5 // in ticks (=1/60 of a second)
 const GUN_COOLDOWN = 150 // in milliseconds
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 const TEXTURE = Pixi.Texture.from(require("images/pixel.png"))
-
-import {vecLength} from "scripts/Geometry.js"
 
 export default class Player extends Pixi.Sprite {
     constructor() {
@@ -33,7 +32,7 @@ export default class Player extends Pixi.Sprite {
         // magnitudes to match target
         // 0-to-Max speed times
         this.friction  = this.speed / FRICTION_FALLTIME
-        this.walkForce = this.speed / WALKING_RISETIME + this.friction
+        this.moveForce = this.speed / MOVING_RISETIME + this.friction
 
         // The velocity will be defined
         // as a point, which is a tuple
@@ -55,63 +54,52 @@ export default class Player extends Pixi.Sprite {
         this.shoot(delta)
     }
     move(delta) {
-        // Acceleration from input.
-        var unitX = 0
-        var unitY = 0
+        // Movement from input.
+        var movement = {x: 0, y: 0}
         if(Keyb.isDown("<up>") || Keyb.isDown("W")) {
-            unitY = -1
+            movement.y = -1
         }
         if(Keyb.isDown("<down>") || Keyb.isDown("S")) {
-            unitY = +1
+            movement.y = +1
         }
         if(Keyb.isDown("<left>") || Keyb.isDown("A")) {
-            unitX = -1
+            movement.x = -1
         }
         if(Keyb.isDown("<right>") || Keyb.isDown("D")) {
-            unitX = +1
+            movement.x = +1
         }
         // Normalize the unit vector
-        var norm = vecLength(unitX,unitY)
+        var norm = getVectorLength(movement.x, movement.y)
         if(norm > 0) {
-            unitX /= norm
-            unitY /= norm
+            movement.x /= norm
+            movement.y /= norm
         }
 
-        // Non-dynamic velocity assignment
-        // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/1
-        //this.velocity.x = unitX * this.speed
-        //this.velocity.y = unitY * this.speed
-
         // Dynamic velocity assignment
-        // Player walking force
-        this.velocity.x += unitX * this.walkForce * delta.f
-        this.velocity.y += unitY * this.walkForce * delta.f
+        // Player moving force
+        this.velocity.x += movement.x * this.moveForce * delta.f
+        this.velocity.y += movement.y * this.moveForce * delta.f
         // Friction-based deceleration
-        var speed = vecLength(this.velocity.x,this.velocity.y) // Get velocity length to normalize a directional unit vector
+        // Get velocity length to normalize a directional unit vector
+        var speed = getVectorLength(this.velocity.x, this.velocity.y)
         // The friction force points
         // opposite the current
         // velocity at a fixed
         // magnitude of this.friction
-        if(speed>0){
-            if(speed>this.friction * delta.f){
-              this.velocity.x -= (this.velocity.x/speed) * this.friction * delta.f
-              this.velocity.y -= (this.velocity.y/speed) * this.friction * delta.f
-            }
-            else{
-              this.velocity.x = 0
-              this.velocity.y = 0
+        if(speed > 0){
+            if(speed > this.friction * delta.f) {
+                this.velocity.x -= (this.velocity.x / speed) * this.friction * delta.f
+                this.velocity.y -= (this.velocity.y / speed) * this.friction * delta.f
+            } else {
+                this.velocity.x = 0
+                this.velocity.y = 0
             }
         }
         // Cap the speed at the max speed
-        speed = vecLength(this.velocity.x,this.velocity.y)
-        if(speed>this.speed){
-            this.velocity.x *= (this.speed/speed)
-            this.velocity.y *= (this.speed/speed)
+        if(speed > this.speed) {
+            this.velocity.x *= (this.speed / speed)
+            this.velocity.y *= (this.speed / speed)
         }
-
-        // Deceleration of velocity.
-        //this.velocity.x *= FRICTION
-        //this.velocity.y *= FRICTION
 
         // Translation of position by velocity.
         this.position.x += this.velocity.x * delta.f
