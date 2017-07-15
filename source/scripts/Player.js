@@ -10,6 +10,8 @@ const GUN_COOLDOWN = 150 // in milliseconds
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 const TEXTURE = Pixi.Texture.from(require("images/pixel.png"))
 
+import {vecLength} from "scripts/Geometry.js"
+
 export default class Player extends Pixi.Sprite {
     constructor() {
         super(TEXTURE)
@@ -55,14 +57,17 @@ export default class Player extends Pixi.Sprite {
             unitY = +1
         }
         if(Keyb.isDown("<left>") || Keyb.isDown("A")) {
-            unitY = -1
+            unitX = -1
         }
         if(Keyb.isDown("<right>") || Keyb.isDown("D")) {
             unitX = +1
         }
         // Normalize the unit vector
-        unitX /= vecLength(unitX,unitY)
-        unitY /= vecLength(unitX,unitY)
+        var norm = vecLength(unitX,unitY)
+        if(norm > 0) {
+            unitX /= norm
+            unitY /= norm
+        }
 
         // Non-dynamic velocity assignment
         // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/1
