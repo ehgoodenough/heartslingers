@@ -2,7 +2,7 @@ import * as Pixi from "pixi.js"
 
 import Game from "scripts/Game.js"
 import Player from "scripts/Player.js"
-import Foe from "scripts/Foe.js"
+import Baddie from "scripts/Baddie.js"
 import HeartBar from "scripts/HeartBar.js"
 import {FRAME, STAGE} from "scripts/Constants.js"
 
@@ -11,7 +11,7 @@ export default class Scene extends Pixi.Container {
         super()
 
         this.addChild(this.player = new Player())
-        this.addChild(this.foe = new Foe())
+        this.addChild(this.baddie = new Baddie())
         this.addChild(new HeartBar())
     }
     update(delta) {

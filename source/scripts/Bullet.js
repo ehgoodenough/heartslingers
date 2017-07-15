@@ -3,6 +3,7 @@ Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
 const FRICTION = 0.9
 const GRAB_DISTANCE = 15
+const HARM_RADIUS = 20
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 const PICKUP_SOUND = new Audio(require("sounds/pickup.wav"))
@@ -11,7 +12,7 @@ const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xFC2E6C
 
 import {getDistance} from "scripts/Geometry.js"
-import Foe from "scripts/Foe.js"
+import Baddie from "scripts/Baddie.js"
 
 export default class Bullet extends Pixi.Sprite {
     constructor(protobullet) {
@@ -31,6 +32,8 @@ export default class Bullet extends Pixi.Sprite {
         this.rotation = Math.PI * 2 * Math.random()
 
         this.harm = 1
+
+        this.startBeat = protobullet.start || 0
 
         // The duration of time
         // that this bullet has
@@ -82,8 +85,8 @@ export default class Bullet extends Pixi.Sprite {
         // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/4
         if(this.parent != undefined) {
             this.parent.children.forEach((child) => {
-                if(child instanceof Foe) {
-                    if(getDistance(child.position,this.position) < 20 && child.hearts > 0){
+                if(child instanceof Baddie) {
+                    if(getDistance(child.position,this.position) < HARM_RADIUS && child.hearts > 0){
                         child.loseHeart(this.harm)
                         this.speed = 0
                     }
@@ -94,6 +97,19 @@ export default class Bullet extends Pixi.Sprite {
     pulseColor(delta) {
         this.tint = HEART_COLOR
         // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/3
+        var scale = this.heartPulse( (Date.now() - this.startBeat)%2000 )
+        this.scale.x = scale
+        this.scale.y = scale
+    }
+    heartPulse(time) {
+      var h
+      if(time > 500){
+          h = 1
+      }
+      else{
+          h = 1 - 0.2*Math.sin( time * (6.283/500) )
+      }
+      return(h)
     }
     gravitateTowardsPlayer() {
         if(this.parent != undefined

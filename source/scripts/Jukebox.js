@@ -15,6 +15,10 @@ export default class Jukebox {
             })
         })
 
+        this.heartbeat = new Audio(require("music/Heartbeatss.mp3"))
+        this.heartbeat.volume = DEFAULT_VOLUME 
+        this.heartbeat.loop = true
+
         this.play()
     }
     play() {
@@ -22,6 +26,7 @@ export default class Jukebox {
             var music = this.music.shift()
             console.log("Playing", music.src)
             music.play()
+            this.heartbeat.play()
             this.music.push(music)
         }
     }

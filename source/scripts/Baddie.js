@@ -13,13 +13,13 @@ const MOVING_RISETIME  = 5 // in ticks (=1/60 of a second)
 const GUN_COOLDOWN = 150 // in milliseconds
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
-const FOE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
+const BADDIE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
 
 const DEATH_SOUND = new Audio(require("sounds/death.wav"))
 
-export default class Foe extends Pixi.Sprite {
+export default class Baddie extends Pixi.Sprite {
     constructor() {
-        super(FOE_TEXTURE)
+        super(BADDIE_TEXTURE)
 
         this.position.x = FRAME.WIDTH / 4
         this.position.y = FRAME.HEIGHT / 4
