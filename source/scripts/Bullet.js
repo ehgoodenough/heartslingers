@@ -11,6 +11,7 @@ const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xFC2E6C
 
 import {getDistance} from "scripts/Geometry.js"
+import Foe from "scripts/Foe.js"
 
 export default class Bullet extends Pixi.Sprite {
     constructor(protobullet) {
@@ -79,6 +80,16 @@ export default class Bullet extends Pixi.Sprite {
     }
     collideWithBaddies() {
         // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/4
+        if(this.parent != undefined) {
+            this.parent.children.forEach((child) => {
+                if(child instanceof Foe) {
+                    if(getDistance(child.position,this.position) < 20 && child.hearts > 0){
+                        child.loseHeart(this.harm)
+                        this.speed = 0
+                    }
+                }
+            })
+        }
     }
     pulseColor(delta) {
         this.tint = HEART_COLOR

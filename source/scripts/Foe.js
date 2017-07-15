@@ -2,7 +2,6 @@ import * as Pixi from "pixi.js"
 import Keyb from "keyb"
 
 import {getVectorLength} from "scripts/Geometry.js"
-import {getDistance} from "scripts/Geometry.js"
 import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 import Scene from "scripts/Scene.js"
@@ -48,7 +47,6 @@ export default class Foe extends Pixi.Sprite {
             this.spinWhenDead(delta)
         } else {
             this.move(delta)
-            this.collide(delta)
         }
     }
     move(delta) {
@@ -102,17 +100,6 @@ export default class Foe extends Pixi.Sprite {
         // Translation of position by velocity.
         this.position.x += this.velocity.x * delta.f
         this.position.y += this.velocity.y * delta.f
-    }
-    collide(delta) {
-        if(this.parent != undefined) {
-            this.parent.children.forEach((child) => {
-                if(child.harm != undefined) {
-                    if(getDistance(child.position,this.position) < 30 && child.speed>0){
-                        this.loseHeart(child.harm)
-                    }
-                }
-            })
-        }
     }
     spinWhenDead(delta) {
         this.rotation += this.velocity * delta.f
