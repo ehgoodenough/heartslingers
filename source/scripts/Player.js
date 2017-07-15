@@ -37,6 +37,8 @@ export default class Player extends Pixi.Sprite {
             // in milliseconds.
             cooldown: 0,
         }
+
+        this.hearts = 100
     }
     update(delta) {
         this.move(delta)
@@ -85,7 +87,18 @@ export default class Player extends Pixi.Sprite {
                         direction: 180 * Math.DEG_TO_RAD
                     }), 0)
                 }
+
+                // Lose a heart.
+                this.loseHeart()
             }
+        }
+    }
+    loseHeart(damage) {
+        damage = damage || 1
+        this.hearts -= damage
+        if(this.hearts <= 0) {
+            this.hearts = 0
+            // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/7
         }
     }
 }
