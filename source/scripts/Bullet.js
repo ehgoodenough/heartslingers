@@ -76,8 +76,16 @@ export default class Bullet extends Pixi.Sprite {
 
         this.distance -= this.speed * delta.f
 
-        this.position.x += Math.sin(this.direction) * this.speed * delta.f
-        this.position.y += Math.cos(this.direction) * this.speed * delta.f
+        this.velocity = new Pixi.Point()
+        this.velocity.x = Math.sin(this.direction) * this.speed * delta.f
+        this.velocity.y = Math.cos(this.direction) * this.speed * delta.f
+
+        if(this.parent && this.parent.tiledmap) {
+            this.parent.tiledmap.handlePotentialCollisions(this.position, this.velocity)
+        }
+
+        this.position.x += this.velocity.x
+        this.position.y += this.velocity.y
 
         this.rotation -= (Math.PI / 32) * this.speed
     }

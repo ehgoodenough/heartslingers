@@ -108,6 +108,11 @@ export default class Player extends Pixi.Sprite {
             this.velocity.y *= (this.speed / speed)
         }
 
+        if(this.parent
+        && this.parent.tiledmap) {
+            this.parent.tiledmap.handlePotentialCollisions(this.position, this.velocity)
+        }
+
         // Translation of position by velocity.
         this.position.x += this.velocity.x * delta.f
         this.position.y += this.velocity.y * delta.f
