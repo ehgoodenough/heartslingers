@@ -12,9 +12,9 @@
     "url": "https://github.com/ehgoodenough/gmtk-2017"
   },
   "scripts": {
-    "build": "codeglue --stage=PRODUCTION",
-    "start": "codeglue --stage=DEVELOPMENT --mode=SERVER",
-    "publish": "codeglue --stage=PRODUCTION --mode=PUBLISH"
+    "build": "node ./codeglue --stage=PRODUCTION",
+    "start": "node ./codeglue --stage=DEVELOPMENT --mode=SERVER",
+    "publish": "node ./codeglue --stage=PRODUCTION --mode=PUBLISH"
   },
   "dependencies": {
     "keyb": "^1.1.0",
