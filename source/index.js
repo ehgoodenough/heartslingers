@@ -5,6 +5,9 @@ import Game from "scripts/Game.js"
 import Jukebox from "scripts/Jukebox.js"
 import {STAGE} from "scripts/Constants.js"
 
+Math.DEG_TO_RAD = Math.PI / 180
+Math.RAD_TO_DEG = 180 / Math.PI
+
 var game = new Game()
 
 document.getElementById("frame").appendChild(game.renderer.view)
