@@ -40,6 +40,8 @@ export default class Player extends Pixi.Sprite {
         // with x and y coordinates. :]
         this.velocity = new Pixi.Point()
 
+        this.heartStart = Date.now()
+
         this.gun = {
             // This is the duration of
             // time until the gun can shoot
@@ -126,7 +128,8 @@ export default class Player extends Pixi.Sprite {
                 if(this.parent != undefined) {
                     this.parent.addChildAt(new Bullet({
                         position: this.position,
-                        direction: 180 * Math.DEG_TO_RAD
+                        direction: 180 * Math.DEG_TO_RAD,
+                        start: this.heartStart
                     }), 0)
                 }
 
