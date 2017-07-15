@@ -46,19 +46,28 @@ export default class Player extends Pixi.Sprite {
     }
     move(delta) {
         // Acceleration from input.
-        // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/1
+        var unitX = 0
+        var unitY = 0
         if(Keyb.isDown("<up>") || Keyb.isDown("W")) {
-            this.velocity.y = -1 * this.speed
+            unitY = -1
         }
         if(Keyb.isDown("<down>") || Keyb.isDown("S")) {
-            this.velocity.y = +1 * this.speed
+            unitY = +1
         }
         if(Keyb.isDown("<left>") || Keyb.isDown("A")) {
-            this.velocity.x = -1 * this.speed
+            unitY = -1
         }
         if(Keyb.isDown("<right>") || Keyb.isDown("D")) {
-            this.velocity.x = +1 * this.speed
+            unitX = +1
         }
+        // Normalize the unit vector
+        unitX /= vecLength(unitX,unitY)
+        unitY /= vecLength(unitX,unitY)
+
+        // Non-dynamic velocity assignment
+        // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/1
+        this.velocity.x = unitX * this.speed
+        this.velocity.y = unitY * this.speed
 
         // Translation of position by velocity.
         this.position.x += this.velocity.x * delta.f
