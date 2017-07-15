@@ -93,11 +93,20 @@ export default class Player extends Pixi.Sprite {
         // opposite the current
         // velocity at a fixed
         // magnitude of this.friction
+<<<<<<< b972a659c55b11d17d6b62013b0ceab7d16d0894
         if(speed > 0){
             if(speed > this.friction * delta.f) {
                 this.velocity.x -= (this.velocity.x / speed) * this.friction * delta.f
                 this.velocity.y -= (this.velocity.y / speed) * this.friction * delta.f
             } else {
+=======
+        if(speed>0){
+            if(speed>this.friction * delta.f){
+                this.velocity.x -= (this.velocity.x/speed) * this.friction * delta.f
+                this.velocity.y -= (this.velocity.y/speed) * this.friction * delta.f
+            }
+            else{
+>>>>>>> pre-Schlagermove tweaks
                 this.velocity.x = 0
                 this.velocity.y = 0
             }
