@@ -21,5 +21,7 @@ export const STAGE = stage
 // The Dimensions //
 ///////////////////
 
-export const WIDTH = 320
-export const HEIGHT = 180
+export const FRAME = {
+    WIDTH: 320,
+    HEIGHT: 180
+}

@@ -2,14 +2,14 @@ import * as Pixi from "pixi.js"
 
 import Player from "scripts/Player.js"
 import Text from "scripts/Text.js"
-import {WIDTH, HEIGHT} from "scripts/Constants.js"
+import {FRAME} from "scripts/Constants.js"
 
 export default class Game extends Pixi.Container {
     constructor() {
         super()
 
         this.renderer = Pixi.autoDetectRenderer({
-            width: WIDTH, height: HEIGHT,
+            width: FRAME.WIDTH, height: FRAME.HEIGHT,
             backgroundColor: 0x00BFFE
         })
 
