@@ -10,8 +10,21 @@ export default class Scene extends Pixi.Container {
 
         this.addChild(this.tiledmap = new Tiledmap())
         this.addChild(this.player = new Player())
+        this.addChild(new TiledmapTopLayer(this.tiledmap))
 
 
+    }
+    addChild(child) {
+        super.addChild(child)
+        this.children.sort(function(a, b) {
+            if(a.stack < b.stack) {
+                return -1
+            } else if(a.stack > b.stack) {
+                return +1
+            } else {
+                return 0
+            }
+        })
     }
     update(delta) {
         this.children.forEach((child) => {
@@ -73,6 +86,25 @@ export default class Scene extends Pixi.Container {
 
 import tiledmap from "maps/1.json"
 
+class TiledmapTopLayer extends Pixi.Graphics {
+    constructor(tilemap) {
+        super()
+        this.beginFill(0x003648)
+        tiledmap.layers.forEach((layer) => {
+            layer.objects.forEach((object) => {
+                if(!!object.polygon) {
+                    this.drawPolygon(object.polygon.map((point) => {
+                        return new Pixi.Point(object.x + point.x, object.y + point.y - 10)
+                    }))
+                }
+            })
+        })
+    }
+    get stack() {
+        return 100
+    }
+}
+
 class Tiledmap extends Pixi.Graphics {
     constructor() {
         super()
@@ -88,7 +120,7 @@ class Tiledmap extends Pixi.Graphics {
             })
         })
 
-        this.beginFill(0x003648)
+        this.beginFill(0x006D91)
         this.polygons.forEach((polygon) => {
             this.drawPolygon(polygon)
         })
@@ -102,5 +134,8 @@ class Tiledmap extends Pixi.Graphics {
                 velocity.y = 0
             }
         })
+    }
+    get stack() {
+        return -100
     }
 }

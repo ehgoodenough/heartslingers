@@ -129,7 +129,7 @@ export default class Player extends Pixi.Sprite {
 
                 // And fire a shot.
                 if(this.parent != undefined) {
-                    this.parent.addChildAt(new Bullet({
+                    this.parent.addChild(new Bullet({
                         position: this.position,
                         direction: 180 * Math.DEG_TO_RAD
                     }), 0)
@@ -159,6 +159,7 @@ export default class Player extends Pixi.Sprite {
                     var text = new Text("Hit R to restart")
                     text.position.y = this.position.y - (this.height * 1.5)
                     text.position.x = this.position.x
+                    text.stack = 1000
                     this.parent.addChild(text)
                 }
             }
@@ -189,5 +190,8 @@ export default class Player extends Pixi.Sprite {
         DEATH_SOUND.volume = 0.1
         DEATH_SOUND.currentTime = 0
         DEATH_SOUND.play()
+    }
+    get stack() {
+        return 0
     }
 }
