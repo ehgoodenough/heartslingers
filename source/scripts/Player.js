@@ -94,12 +94,12 @@ export default class Player extends Pixi.Sprite {
         // magnitude of this.friction
         if(speed>0){
             if(speed>this.friction * delta.f){
-              this.velocity.x -= (this.velocity.x/speed) * this.friction * delta.f
-              this.velocity.y -= (this.velocity.y/speed) * this.friction * delta.f
+                this.velocity.x -= (this.velocity.x/speed) * this.friction * delta.f
+                this.velocity.y -= (this.velocity.y/speed) * this.friction * delta.f
             }
             else{
-              this.velocity.x = 0
-              this.velocity.y = 0
+                this.velocity.x = 0
+                this.velocity.y = 0
             }
         }
         // Cap the speed at the max speed
