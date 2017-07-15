@@ -2,6 +2,7 @@ import * as Pixi from "pixi.js"
 import Keyb from "keyb"
 
 import {getVectorLength} from "scripts/Geometry.js"
+import {getDistance} from "scripts/Geometry.js"
 import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 import Scene from "scripts/Scene.js"
@@ -13,16 +14,16 @@ const MOVING_RISETIME  = 5 // in ticks (=1/60 of a second)
 const GUN_COOLDOWN = 150 // in milliseconds
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
-const PLAYER_TEXTURE = Pixi.Texture.from(require("images/player.png"))
+const FOE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
 
 const DEATH_SOUND = new Audio(require("sounds/death.wav"))
 
-export default class Player extends Pixi.Sprite {
+export default class Foe extends Pixi.Sprite {
     constructor() {
-        super(PLAYER_TEXTURE)
+        super(FOE_TEXTURE)
 
-        this.position.x = FRAME.WIDTH / 2
-        this.position.y = FRAME.HEIGHT / 2
+        this.position.x = FRAME.WIDTH / 4
+        this.position.y = FRAME.HEIGHT / 4
 
         this.anchor.x = 0.5
         this.anchor.y = 0.5
@@ -40,40 +41,30 @@ export default class Player extends Pixi.Sprite {
         // with x and y coordinates. :]
         this.velocity = new Pixi.Point()
 
-        this.heartStart = Date.now()
-
-        this.gun = {
-            // This is the duration of
-            // time until the gun can shoot
-            // another shot. This time is
-            // in milliseconds.
-            cooldown: 0,
-        }
-
-        this.hearts = 25
+        this.hearts = 5
     }
     update(delta) {
         if(this.isDead) {
             this.spinWhenDead(delta)
         } else {
             this.move(delta)
-            this.shoot(delta)
+            this.collide(delta)
         }
     }
     move(delta) {
         // Movement from input.
         var movement = {x: 0, y: 0}
         if(Keyb.isDown("<up>") || Keyb.isDown("W")) {
-            movement.y = -1
-        }
-        if(Keyb.isDown("<down>") || Keyb.isDown("S")) {
             movement.y = +1
         }
+        if(Keyb.isDown("<down>") || Keyb.isDown("S")) {
+            movement.y = -1
+        }
         if(Keyb.isDown("<left>") || Keyb.isDown("A")) {
-            movement.x = -1
+            movement.x = +1
         }
         if(Keyb.isDown("<right>") || Keyb.isDown("D")) {
-            movement.x = +1
+            movement.x = -1
         }
         // Normalize the unit vector
         var norm = getVectorLength(movement.x, movement.y)
@@ -108,39 +99,19 @@ export default class Player extends Pixi.Sprite {
             this.velocity.y *= (this.speed / speed)
         }
 
-        if(this.parent
-        && this.parent.tiledmap) {
-            this.parent.tiledmap.handlePotentialCollisions(this.position, this.velocity)
-        }
-
         // Translation of position by velocity.
         this.position.x += this.velocity.x * delta.f
         this.position.y += this.velocity.y * delta.f
     }
-    shoot(delta) {
-        if(this.gun.cooldown > 0) {
-            this.gun.cooldown -= delta.ms
-        }
-
-        // If the user is holding the shoot key...
-        if(Keyb.isDown("<space>")) {
-            // And the gun has cooled down...
-            if(this.gun.cooldown <= 0) {
-                // Then heat up the gun again!
-                this.gun.cooldown = GUN_COOLDOWN
-
-                // And fire a shot.
-                if(this.parent != undefined) {
-                    this.parent.addChildAt(new Bullet({
-                        position: this.position,
-                        direction: 180 * Math.DEG_TO_RAD,
-                        start: this.heartStart
-                    }), 0)
+    collide(delta) {
+        if(this.parent != undefined) {
+            this.parent.children.forEach((child) => {
+                if(child.harm != undefined) {
+                    if(getDistance(child.position,this.position) < 30 && child.speed>0){
+                        this.loseHeart(child.harm)
+                    }
                 }
-
-                // Lose a heart.
-                this.loseHeart()
-            }
+            })
         }
     }
     spinWhenDead(delta) {
@@ -157,19 +128,6 @@ export default class Player extends Pixi.Sprite {
                 this.isTrulyDead = true
 
                 this.tint = 0x333333
-
-                if(this.parent != undefined) {
-                    var text = new Text("Hit R to restart")
-                    text.position.y = this.position.y - (this.height * 1.5)
-                    text.position.x = this.position.x
-                    this.parent.addChild(text)
-                }
-            }
-        }
-
-        if(Keyb.isJustDown("R", delta.ms)) {
-            if(this.parent instanceof Scene) {
-                this.parent.restartScene()
             }
         }
     }
