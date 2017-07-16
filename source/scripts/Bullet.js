@@ -38,11 +38,11 @@ export default class Bullet extends Pixi.Sprite {
 
         this.power = protobullet.power || false
         if(this.power){
-          this.tint = 0x942F4F
-          this.spinaway = 100
-          this.harm = 3
-          this.scale.x = 1.5
-          this.scale.y = 1.5
+            this.tint = 0x942F4F
+            this.spinaway = 100
+            this.harm = 3
+            this.scale.x = 1.5
+            this.scale.y = 1.5
         }
 
         // The duration of time
