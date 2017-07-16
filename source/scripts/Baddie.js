@@ -1,7 +1,7 @@
 import * as Pixi from "pixi.js"
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
-import {getVectorLength} from "scripts/Geometry.js"
+import {getVectorLength,getDistance} from "scripts/Geometry.js"
 import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 import BaddieBullet from "scripts/BaddieBullet.js"
@@ -36,6 +36,7 @@ export default class Baddie extends Pixi.Sprite {
             // in milliseconds.
             cooldown: 0,
         }
+        this.addChild(this.gun.sprite = new Blaster())
 
         this.velocity = new Pixi.Point()
     }
@@ -51,6 +52,7 @@ export default class Baddie extends Pixi.Sprite {
             this.velocity.r = 0
         }
 
+        this.gun.sprite.update(delta)
         if(this.isDead == false) {
             this.shoot(delta)
         }
@@ -68,11 +70,11 @@ export default class Baddie extends Pixi.Sprite {
                 // Then heat up the gun again!
                 this.gun.cooldown = GUN_COOLDOWN
 
-                // And fire a shot.
+                // ...then fire the shot!
                 if(this.parent != undefined) {
                     this.parent.addChild(new BaddieBullet({
                         position: this.position,
-                        direction: 3.1415
+                        direction: this.gun.sprite.rotation
                     }), 0)
                 }
             }
@@ -117,5 +119,34 @@ export default class Baddie extends Pixi.Sprite {
     }
     get stack() {
         return -5
+    }
+}
+
+const BLASTER_TEXTURE = Pixi.Texture.from(require("images/gun.png"))
+
+class Blaster extends Pixi.Sprite {
+    constructor() {
+        super(BLASTER_TEXTURE)
+
+        this.anchor.x = 0
+        this.anchor.y = 0.5
+
+        this.rotation = 0
+    }
+    update(delta) {
+        // Aim the shot!
+        if(this.parent.parent != undefined
+        && this.parent.parent.player != undefined) {
+            var playerPos = this.parent.parent.player.position
+            var targetAngle = Math.atan2(playerPos.y-this.parent.position.y,playerPos.x-this.parent.position.x)
+            this.rotation += 0.05*(targetAngle-this.rotation)
+        }
+        // Flip the gun if necessary
+        if(this.rotation > Math.PI / +2
+        || this.rotation < Math.PI / -2) {
+            this.scale.y = -1
+        } else {
+            this.scale.y = +1
+        }
     }
 }
