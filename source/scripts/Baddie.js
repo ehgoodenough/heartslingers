@@ -11,7 +11,7 @@ import Text from "scripts/Text.js"
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 const DEATH_SOUND = new Audio(require("sounds/explosion.wav"))
 
-const BADDIE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
+const BADDIE_TEXTURE = Pixi.Texture.from(require("images/baddie.png"))
 const WIN_SCREEN_TEXTURE = Pixi.Texture.from(require("images/win-screen.png"))
 
 const GUN_COOLDOWN = 150 // in milliseconds
