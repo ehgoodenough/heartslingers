@@ -23,6 +23,17 @@ const HEARTGRAB_SOUND = new Audio(require("sounds/heartgrab.wav"))
 //const SPLATTER_SOUND = new Audio(require("sounds/splatter.wav"))
 const GAINUP_SOUND = new Audio(require("sounds/HeartFanfare.wav"))
 
+const VOICE_SOUNDS = [
+    new Audio(require("sounds/voice-3.wav")),
+    new Audio(require("sounds/voice-4.wav")),
+    new Audio(require("sounds/voice-5.wav")),
+    new Audio(require("sounds/voice-6.wav")),
+    new Audio(require("sounds/voice-7.wav")),
+    new Audio(require("sounds/voice-8.wav")),
+    new Audio(require("sounds/voice-9.wav")),
+    new Audio(require("sounds/voice-10.wav")),
+]
+
 export default class Player extends Pixi.Sprite {
     constructor() {
         super(PLAYER_TEXTURE)
@@ -203,9 +214,15 @@ export default class Player extends Pixi.Sprite {
             // Show beating heart above your hand
             this.heldHeart = new DisplayHeart(this.position)
             this.parent.addChild(this.heldHeart, 0)
-            GAINUP_SOUND.currentTime = 0
-            GAINUP_SOUND.volume = 0.1
-            GAINUP_SOUND.play()
+            // GAINUP_SOUND.currentTime = 0
+            // GAINUP_SOUND.volume = 0.1
+            // GAINUP_SOUND.play()
+            // RIP GAINUP_SOUND
+
+            var VOICE = VOICE_SOUNDS[Math.floor(Math.random() * VOICE_SOUNDS.length)]
+            VOICE.currentTime = 0
+            VOICE.volume = 0.2
+            VOICE.play()
         }
         // Beating
         if(this.ripHeart > 80){
