@@ -31,6 +31,7 @@ export default class Baddie extends Pixi.Sprite {
         this.position.y += this.velocity.y * delta.f || 0
         this.rotation += this.velocity.r * delta.f || 0
 
+        // Deceleration from friction.
         this.velocity.r *= ROTATIONAL_FRICTION
         if(this.velocity.r <= 0.0005) {
             this.velocity.r = 0
