@@ -32,7 +32,7 @@ export default class BaddieBullet extends Pixi.Sprite {
 
         this.speed = protobullet.speed || 5
 
-        this.rotation = Math.PI * 2 * Math.random()
+        this.rotation = (protobullet.direction - Math.PI/2) || 0
 
         this.harm = 1
 
