@@ -216,6 +216,7 @@ export default class Player extends Pixi.Sprite {
             this.ripHeart = 0
             this.parent.removeChild(this.heldHeart)
             this.gainHeart(5)
+            this.maxhearts += 5
         }
     }
     heartbeat(){
