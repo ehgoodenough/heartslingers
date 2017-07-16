@@ -54,7 +54,7 @@ export default class HeartBar extends Pixi.Container {
         var percentage = this.parent.scene.player.hearts / this.parent.scene.player.maxhearts
 
         // Don't let the percentage fall below 0%.
-        percentage = Math.max(percentage, 0)
+        percentage = Math.min(Math.max(percentage, 0), 1)
 
         // Return the percentage
         return percentage
