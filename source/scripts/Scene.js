@@ -15,6 +15,11 @@ export default class Scene extends Pixi.Container {
         this.map.baddies.forEach((baddie) => {
             this.addChild(baddie)
         })
+        
+        // // For debugging just one baddie:
+        // this.addChild(this.map.baddies[0])
+        // this.player.position.x = 288
+        // this.player.position.y = 177
 
         this.addChild(this.map.raisedLayer)
     }

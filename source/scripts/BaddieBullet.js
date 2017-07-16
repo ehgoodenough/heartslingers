@@ -8,6 +8,7 @@ const HARM_RADIUS = 20
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 const HURT_SOUND = new Audio(require("sounds/hit.wav"))
+const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const SHARD_TEXTURE = Pixi.Texture.from(require("images/shard.png"))
 const SHARD_COLOR = 0xFFF26B
@@ -32,6 +33,9 @@ export default class BaddieBullet extends Pixi.Sprite {
 
         this.speed = protobullet.speed || 5
 
+        this.scale.x = 1.2
+        this.scale.y = 1.2
+
         this.rotation = (protobullet.direction - Math.PI/2) || 0
 
         this.harm = 1
@@ -45,7 +49,6 @@ export default class BaddieBullet extends Pixi.Sprite {
         SHOOT_SOUND.currentTime = 0
         SHOOT_SOUND.playbackRate = Math.random() * 0.5 + 0.5
         //SHOOT_SOUND.play()
-
         this.velocity = new Pixi.Point()
     }
     update(delta) {

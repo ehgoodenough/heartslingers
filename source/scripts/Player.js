@@ -27,8 +27,13 @@ export default class Player extends Pixi.Sprite {
     constructor() {
         super(PLAYER_TEXTURE)
 
-        this.position.x = FRAME.WIDTH / 2
-        this.position.y = FRAME.HEIGHT / 2
+        // These are hardcoded to spawn
+        // the player in a good spot
+        // on the level. Eventually
+        // refactor this to read from
+        // the level data like the baddies.
+        this.position.x = 108
+        this.position.y = 96
 
         this.anchor.x = 0.5
         this.anchor.y = 0.5
@@ -46,8 +51,9 @@ export default class Player extends Pixi.Sprite {
         // with x and y coordinates. :]
         this.velocity = new Pixi.Point()
 
-        this.hearts = 50
         this.ripHeart = 0
+        this.maxhearts = 15
+        this.hearts = 15
 
         this.gun = {
             // This is the duration of
