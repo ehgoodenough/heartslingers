@@ -3,16 +3,18 @@ Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
 const FRICTION = 0.9
 const GRAB_DISTANCE = 15
-const GRAVITATE_DISTANCE = 50
 const HARM_RADIUS = 20
+const GRAVITATE_DISTANCE = 40
+const HOOVER_SPEED = 3
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xF86795
+const HEART_SLOWDOWN_DISTANCE = 50
 
-import {getDistance} from "scripts/Geometry.js"
+import {getDistance,getVectorLength} from "scripts/Geometry.js"
 import Jukebox from "scripts/Jukebox.js"
 import Baddie from "scripts/Baddie.js"
 
@@ -27,11 +29,12 @@ export default class Bullet extends Pixi.Sprite {
         this.anchor.y = 0.5
 
         this.direction = protobullet.direction || 0
-        this.distance = protobullet.distance || 50
+        this.distance = protobullet.distance || 0
 
         this.speed = protobullet.speed || 5
 
         this.rotation = (protobullet.direction - Math.PI/2) || 0 //Math.PI * 2 * Math.random()
+        this.spinaway = 50+Math.random()*50
 
         this.harm = 1
 
@@ -75,18 +78,18 @@ export default class Bullet extends Pixi.Sprite {
             this.velocity.y = 0
         }
 
+        */
         this.velocity.r *= FRICTION
         if(this.velocity.r <= 0.0005) {
             this.velocity.r = 0
         }
-        */
     }
     move(delta) {
         // After a bullet has
         // passed a given distance,
         // we begin to slow it down.
         if(this.speed > 0) {
-            if(this.distance <= 0) {
+            if(this.distance >= HEART_SLOWDOWN_DISTANCE) {
                 this.speed *= FRICTION
             }
         }
@@ -99,10 +102,15 @@ export default class Bullet extends Pixi.Sprite {
             this.speed = 0
         }
 
-        this.distance -= this.speed
+        this.distance += this.speed * delta.f
+
+        //this.velocity.r += (Math.PI/180) * (-1+Math.random()*2)
 
         this.velocity.x = Math.cos(this.direction) * this.speed
         this.velocity.y = Math.sin(this.direction) * this.speed
+        if(this.distance > this.spinaway){
+            this.velocity.r = (Math.PI / 32) * this.speed
+        }
 
         if(this.parent && this.parent.map) {
             this.parent.map.handlePotentialCollisions(this.position, this.velocity)
@@ -146,7 +154,16 @@ export default class Bullet extends Pixi.Sprite {
             var distance = getDistance(this.position, this.parent.player.position)
 
             if(distance < GRAVITATE_DISTANCE) {
-                // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/5
+                // Get the offset vector and normalize it into a unit vector
+                var movement = {x: this.parent.player.position.x - this.position.x, y: this.parent.player.position.y - this.position.y}
+                var norm = getVectorLength(movement.x, movement.y)
+                if(norm > 0) {
+                    movement.x /= norm
+                    movement.y /= norm
+                }
+                // Move towards the player
+                this.velocity.x = movement.x * HOOVER_SPEED
+                this.velocity.y = movement.y * HOOVER_SPEED
             }
 
             if(distance < GRAB_DISTANCE) {
