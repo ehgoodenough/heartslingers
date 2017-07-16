@@ -5,6 +5,8 @@ import Map from "scripts/Map.js"
 import Player from "scripts/Player.js"
 import {FRAME, STAGE} from "scripts/Constants.js"
 
+const TREE_TEXTURE = Pixi.Texture.from(require("images/CherryTree.png"))
+
 export default class Scene extends Pixi.Container {
     constructor() {
         super()
@@ -22,6 +24,24 @@ export default class Scene extends Pixi.Container {
         // this.player.position.y = 177
 
         this.addChild(this.map.raisedLayer)
+
+        this.addChild(this.tree = new Pixi.Sprite(TREE_TEXTURE))
+        this.tree.position.x = 356
+        this.tree.position.y = 250
+        this.tree.anchor.x = 0.5
+        this.tree.anchor.y = 0.5
+        this.tree.stack = 100000
+        this.tree.scale.x = 0.5
+        this.tree.scale.y = 0.5
+
+        this.addChild(this.tree = new Pixi.Sprite(TREE_TEXTURE))
+        this.tree.position.x = 546
+        this.tree.position.y = 483
+        this.tree.anchor.x = 0.5
+        this.tree.anchor.y = 0.5
+        this.tree.stack = 100000
+        this.tree.scale.x = 0.65
+        this.tree.scale.y = 0.65
     }
     addChild(child) {
         super.addChild(child)
