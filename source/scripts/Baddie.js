@@ -5,6 +5,7 @@ import {getVectorLength} from "scripts/Geometry.js"
 import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 import Scene from "scripts/Scene.js"
+import Text from "scripts/Text.js"
 
 const BADDIE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
 const DEATH_SOUND = new Audio(require("sounds/explosion.wav"))
@@ -55,6 +56,26 @@ export default class Baddie extends Pixi.Sprite {
         DEATH_SOUND.currentTime = 0
         DEATH_SOUND.volume = 0.1
         DEATH_SOUND.play()
+
+        if(this.parent) {
+            var alasEvilStillLurksInThisWorld
+            this.parent.children.forEach((child) => {
+                if(child instanceof Baddie) {
+                    if(child.isDead != true) {
+                        alasEvilStillLurksInThisWorld = true
+                    }
+                }
+            })
+
+            if(alasEvilStillLurksInThisWorld != true) {
+                this.parent.hoorayEvilHasBeenVanquished = true
+
+                var text = new Text("YOU WIN!", {color: 0xFC2E6C})
+                text.position.x = FRAME.WIDTH / 2
+                text.position.y = FRAME.HEIGHT / 2
+                this.parent.parent.addChild(text)
+            }
+        }
     }
     get stack() {
         return -5

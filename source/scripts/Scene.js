@@ -44,7 +44,7 @@ export default class Scene extends Pixi.Container {
 
         targetposition.x = this.player.position.x - (FRAME.WIDTH * (1/2))
         targetposition.y = this.player.position.y - (FRAME.HEIGHT * (1/2))
-        
+
         // We're going to move
         // the entire scene in
         // the OPPOSITE direction
