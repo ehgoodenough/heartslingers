@@ -15,7 +15,7 @@ export default class Scene extends Pixi.Container {
         this.map.baddies.forEach((baddie) => {
             this.addChild(baddie)
         })
-        
+
         // // For debugging just one baddie:
         // this.addChild(this.map.baddies[0])
         // this.player.position.x = 288
@@ -36,6 +36,11 @@ export default class Scene extends Pixi.Container {
         })
     }
     update(delta) {
+        // mutate delta to do slow-mo during animations
+        if(this.player.ripHeart > 0){
+            delta = delta * 0.2
+        }
+
         this.children.forEach((child) => {
             if(child.update instanceof Function) {
                 child.update(delta)
