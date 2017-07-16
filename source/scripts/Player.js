@@ -6,6 +6,7 @@ import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 import Scene from "scripts/Scene.js"
 import Text from "scripts/Text.js"
+import Jukebox from "scripts/Jukebox.js"
 
 const FRICTION = 0.75
 const FRICTION_FALLTIME = 15 // in ticks (=1/60 of a second)
@@ -59,6 +60,7 @@ export default class Player extends Pixi.Sprite {
             this.move(delta)
             this.gun.sprite.update(delta)
             this.shoot(delta)
+            this.heartbeat()
         }
     }
     move(delta) {
@@ -132,16 +134,33 @@ export default class Player extends Pixi.Sprite {
                 // Then heat up the gun again!
                 this.gun.cooldown = GUN_COOLDOWN
 
+                // Are we low on hearts?
+                var desperation = false
+                if(this.hearts < 5){
+                    desperation = true
+                }
+
                 // And fire a shot.
                 if(this.parent != undefined) {
                     this.parent.addChild(new Bullet({
                         position: this.position,
-                        direction: this.gun.sprite.rotation
+                        direction: this.gun.sprite.rotation,
+                        power: desperation
                     }), 0)
                 }
 
                 // Lose a heart.
                 this.loseHeart()
+            }
+        }
+    }
+    heartbeat(){
+        if(!!Jukebox.currentMusic) {
+            if(this.hearts < 10){
+                Jukebox.heartbeat.volume = 1.0 // This doesn't seem to be working.. :/
+            }
+            else{
+                Jukebox.heartbeat.volume = 0.1
             }
         }
     }

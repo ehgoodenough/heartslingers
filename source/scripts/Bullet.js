@@ -36,7 +36,14 @@ export default class Bullet extends Pixi.Sprite {
         this.rotation = (protobullet.direction - Math.PI/2) || 0 //Math.PI * 2 * Math.random()
         this.spinaway = 50+Math.random()*50
 
-        this.harm = 1
+        this.power = protobullet.power || false
+        if(this.power){
+          this.tint = 0x942F4F
+          this.spinaway = 100
+          this.harm = 3
+          this.scale.x = 1.5
+          this.scale.y = 1.5
+        }
 
         // The duration of time
         // that this bullet has
