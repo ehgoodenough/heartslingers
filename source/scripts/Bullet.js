@@ -10,7 +10,7 @@ const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
-const HEART_COLOR = 0xFC2E6C
+const HEART_COLOR = 0xF86795
 
 import {getDistance} from "scripts/Geometry.js"
 import Jukebox from "scripts/Jukebox.js"
@@ -31,7 +31,7 @@ export default class Bullet extends Pixi.Sprite {
 
         this.speed = protobullet.speed || 5
 
-        this.rotation = Math.PI * 2 * Math.random()
+        this.rotation = (protobullet.direction - Math.PI/2) || 0 //Math.PI * 2 * Math.random()
 
         this.harm = 1
 
@@ -46,6 +46,7 @@ export default class Bullet extends Pixi.Sprite {
         SHOOT_SOUND.play()
 
         this.velocity = new Pixi.Point()
+        this.velocity.r = 0
     }
     update(delta) {
         this.time += delta.ms
@@ -62,6 +63,8 @@ export default class Bullet extends Pixi.Sprite {
         this.position.y += this.velocity.y * delta.f || 0
         this.rotation += this.velocity.r * delta.f || 0
 
+        /*
+
         this.velocity.x *= FRICTION
         if(this.velocity.x <= 0.05) {
             this.velocity.x = 0
@@ -76,6 +79,7 @@ export default class Bullet extends Pixi.Sprite {
         if(this.velocity.r <= 0.0005) {
             this.velocity.r = 0
         }
+        */
     }
     move(delta) {
         // After a bullet has
@@ -99,7 +103,6 @@ export default class Bullet extends Pixi.Sprite {
 
         this.velocity.x = Math.cos(this.direction) * this.speed
         this.velocity.y = Math.sin(this.direction) * this.speed
-        this.velocity.r = (Math.PI / 32) * this.speed
 
         if(this.parent && this.parent.map) {
             this.parent.map.handlePotentialCollisions(this.position, this.velocity)

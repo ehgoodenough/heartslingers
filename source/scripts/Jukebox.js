@@ -29,7 +29,7 @@ export default class Jukebox {
             console.log("Playing", music.src)
 
             music.play()
-            this.heartbeat.play()
+            this.heartbeat.currentTime = 0
 
             this.currentMusic = music
         }

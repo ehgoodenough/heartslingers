@@ -10,7 +10,7 @@ const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const SHARD_TEXTURE = Pixi.Texture.from(require("images/shard.png"))
-const SHARD_COLOR = 0xFFD200
+const SHARD_COLOR = 0xFFF26B
 
 import {getDistance} from "scripts/Geometry.js"
 import Jukebox from "scripts/Jukebox.js"
