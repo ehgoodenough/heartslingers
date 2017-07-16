@@ -7,7 +7,7 @@ const GRAVITATE_DISTANCE = 50
 const HARM_RADIUS = 20
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
-const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
+const HURT_SOUND = new Audio(require("sounds/hit.wav"))
 
 const SHARD_TEXTURE = Pixi.Texture.from(require("images/shard.png"))
 const SHARD_COLOR = 0xFFF26B
@@ -111,10 +111,9 @@ export default class BaddieBullet extends Pixi.Sprite {
                 this.parent.player.loseHeart(1)
                 this.parent.removeChild(this)
 
-                // TODO : Make this a hurting sound
-                GRAB_SOUND.currentTime = 0
-                GRAB_SOUND.volume = 0.1
-                GRAB_SOUND.play()
+                HURT_SOUND.currentTime = 0
+                HURT_SOUND.volume = 0.1
+                HURT_SOUND.play()
             }
         }
     }

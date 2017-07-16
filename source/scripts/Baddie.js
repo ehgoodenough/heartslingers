@@ -11,6 +11,7 @@ import Text from "scripts/Text.js"
 const BADDIE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
 const DEATH_SOUND = new Audio(require("sounds/explosion.wav"))
 const GUN_COOLDOWN = 150 // in milliseconds
+const COLLISION_RADIUS = 20
 
 const ROTATIONAL_FRICTION = 0.95
 
@@ -52,9 +53,19 @@ export default class Baddie extends Pixi.Sprite {
             this.velocity.r = 0
         }
 
-        this.gun.sprite.update(delta)
         if(this.isDead == false) {
             this.shoot(delta)
+            this.gun.sprite.update(delta)
+        }
+        else{
+            if(this.reaped != true
+            && this.parent != undefined
+            && this.parent.player != undefined) {
+                if(this.touchingPlayer() && this.parent.player.ripHeart == 0){
+                    this.parent.player.ripHeart = 1
+                    this.reaped = true
+                }
+            }
         }
     }
     // MOVE FUNCTION GOES HERE
@@ -86,6 +97,12 @@ export default class Baddie extends Pixi.Sprite {
         if(this.hearts <= 0) {
             this.hearts = 0
             this.die()
+        }
+    }
+    touchingPlayer(){
+        if(this.parent != undefined
+        && this.parent.player != undefined) {
+            return( (getDistance(this.parent.player.position,this.position)<COLLISION_RADIUS) )
         }
     }
     die() {
