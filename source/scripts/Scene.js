@@ -27,7 +27,7 @@ export default class Scene extends Pixi.Container {
         var targetposition = new Pixi.Point()
 
         targetposition.x = this.player.position.x - (FRAME.WIDTH * (1/2))
-        targetposition.y = this.player.position.y - (FRAME.HEIGHT * (2/3))
+        targetposition.y = this.player.position.y - (FRAME.HEIGHT * (1/2))
 
         // Keep the frame locked
         // within the confines of
