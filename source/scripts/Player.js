@@ -219,7 +219,9 @@ export default class Player extends Pixi.Sprite {
             // GAINUP_SOUND.play()
             // RIP GAINUP_SOUND
 
-            var VOICE = VOICE_SOUNDS[Math.floor(Math.random() * VOICE_SOUNDS.length)]
+            // var VOICE = VOICE_SOUNDS[Math.floor(Math.random() * VOICE_SOUNDS.length)]
+            var VOICE = VOICE_SOUNDS.shift()
+            VOICE_SOUNDS.push(VOICE)
             VOICE.currentTime = 0
             VOICE.volume = 0.2
             VOICE.play()

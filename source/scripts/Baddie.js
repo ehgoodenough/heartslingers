@@ -9,9 +9,10 @@ import Scene from "scripts/Scene.js"
 import Text from "scripts/Text.js"
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
+const DEATH_SOUND = new Audio(require("sounds/explosion.wav"))
 
 const BADDIE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
-const DEATH_SOUND = new Audio(require("sounds/explosion.wav"))
+const WIN_SCREEN_TEXTURE = Pixi.Texture.from(require("images/win-screen.png"))
 
 const GUN_COOLDOWN = 150 // in milliseconds
 const COLLISION_RADIUS = 20
@@ -154,10 +155,13 @@ export default class Baddie extends Pixi.Sprite {
             if(alasEvilStillLurksInThisWorld != true) {
                 this.parent.hoorayEvilHasBeenVanquished = true
 
-                var text = new Text("YOU WIN!", {color: 0xFC2E6C})
-                text.position.x = FRAME.WIDTH / 2
-                text.position.y = FRAME.HEIGHT / 2
-                this.parent.parent.addChild(text)
+                if(this.parent.parent) {
+                    this.parent.parent.addChild(new Pixi.Sprite(WIN_SCREEN_TEXTURE))
+                }
+                // var text = new Text("YOU WIN!", {color: 0xFC2E6C})
+                // text.position.x = FRAME.WIDTH / 2
+                // text.position.y = FRAME.HEIGHT / 2
+                // this.parent.parent.addChild(text)
             }
         }
     }
