@@ -12,6 +12,10 @@ const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 
 const BADDIE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
 const DEATH_SOUND = new Audio(require("sounds/explosion.wav"))
+
+const GUN_COOLDOWN = 150 // in milliseconds
+const COLLISION_RADIUS = 20
+
 const SHORT_GUN_COOLDOWN = 50 // in milliseconds
 const LONG_GUN_COOLDOWN = 750 // in milliseconds
 const EVERY_NTH_SHOT = 2
@@ -39,6 +43,7 @@ export default class Baddie extends Pixi.Sprite {
             // another shot. This time is
             // in milliseconds.
             cooldown: 0,
+
             // This is a counter of how
             // many times this gun has shot.
             // We use this to determine how
@@ -46,6 +51,7 @@ export default class Baddie extends Pixi.Sprite {
             // every fourth shot requires
             // a longer cooldown.
             shots: 0,
+
         }
         this.addChild(this.gun.sprite = new Blaster())
 
@@ -63,9 +69,19 @@ export default class Baddie extends Pixi.Sprite {
             this.velocity.r = 0
         }
 
-        this.gun.sprite.update(delta)
         if(this.isDead == false) {
             this.shoot(delta)
+            this.gun.sprite.update(delta)
+        }
+        else{
+            if(this.reaped != true
+            && this.parent != undefined
+            && this.parent.player != undefined) {
+                if(this.touchingPlayer() && this.parent.player.ripHeart == 0){
+                    this.parent.player.ripHeart = 1
+                    this.reaped = true
+                }
+            }
         }
     }
     // MOVE FUNCTION GOES HERE
@@ -108,6 +124,12 @@ export default class Baddie extends Pixi.Sprite {
         if(this.hearts <= 0) {
             this.hearts = 0
             this.die()
+        }
+    }
+    touchingPlayer(){
+        if(this.parent != undefined
+        && this.parent.player != undefined) {
+            return( (getDistance(this.parent.player.position,this.position)<COLLISION_RADIUS) )
         }
     }
     die() {
@@ -161,19 +183,8 @@ class Blaster extends Pixi.Sprite {
         && this.parent.parent.player != undefined) {
             var playerPos = this.parent.parent.player.position
             var targetRotation = Math.atan2(playerPos.y-this.parent.position.y,playerPos.x-this.parent.position.x)
-
-            this.rotation = targetRotation
-            // this.rotation += 0.05 * (targetRotation - this.rotation)
-
-            // // Hmmm.. This didn't work :<
-            // // https://stackoverflow.com/questions/4370746/calculate-the-shortest-way-to-rotate-right-or-left
-            // if((targetRotation + (Math.PI*2)) % (Math.PI*2) > Math.PI) {
-            //     this.rotation += this.rotationSpeed
-            // } else {
-            //     this.rotation -= this.rotationSpeed
-            // }
+            this.rotation += 0.05*(targetRotation-this.rotation)
         }
-
         // Flip the gun if necessary
         if(this.rotation > Math.PI / +2
         || this.rotation < Math.PI / -2) {

@@ -15,8 +15,13 @@ const GUN_COOLDOWN = 150 // in milliseconds
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 const PLAYER_TEXTURE = Pixi.Texture.from(require("images/HeartyFist.png"))
+const PLAYER_TEXTURE2 = Pixi.Texture.from(require("images/HeartyFist2.png"))
+const PLAYER_TEXTURE3 = Pixi.Texture.from(require("images/HeartyFist3.png"))
 
 const DEATH_SOUND = new Audio(require("sounds/death.wav"))
+const HEARTGRAB_SOUND = new Audio(require("sounds/heartgrab.wav"))
+//const SPLATTER_SOUND = new Audio(require("sounds/splatter.wav"))
+const GAINUP_SOUND = new Audio(require("sounds/HeartFanfare.wav"))
 
 export default class Player extends Pixi.Sprite {
     constructor() {
@@ -46,6 +51,7 @@ export default class Player extends Pixi.Sprite {
         // with x and y coordinates. :]
         this.velocity = new Pixi.Point()
 
+        this.ripHeart = 0
         this.maxhearts = 15
         this.hearts = 15
 
@@ -60,13 +66,18 @@ export default class Player extends Pixi.Sprite {
         this.addChild(this.gun.sprite = new Gun())
     }
     update(delta) {
-        if(this.isDead) {
-            this.spinWhenDead(delta)
-        } else {
-            this.move(delta)
-            this.gun.sprite.update(delta)
-            this.shoot(delta)
-            this.heartbeat()
+        if(this.ripHeart > 0){
+            this.animateHeartRipper(delta)
+        }
+        else{
+            if(this.isDead) {
+                this.spinWhenDead(delta)
+            } else {
+                this.move(delta)
+                this.gun.sprite.update(delta)
+                this.shoot(delta)
+                this.heartbeat()
+            }
         }
     }
     move(delta) {
@@ -160,6 +171,53 @@ export default class Player extends Pixi.Sprite {
             }
         }
     }
+    animateHeartRipper(delta){
+        this.ripHeart+=1
+        // Kneeling
+        if(this.ripHeart == 5){
+            this.texture = PLAYER_TEXTURE3
+        }
+        // Grabbing
+        if(this.ripHeart == 20){
+            this.texture = PLAYER_TEXTURE2
+            // play crunching, grabbing sound
+            HEARTGRAB_SOUND.currentTime = 0
+            HEARTGRAB_SOUND.volume = 0.1
+            HEARTGRAB_SOUND.play()
+        }
+        // Ripping
+        if(this.ripHeart == 60){
+            this.texture = PLAYER_TEXTURE3
+            // Play ripping, gushing sound
+            /*
+            SPLATTER_SOUND.currentTime = 0
+            SPLATTER_SOUND.volume = 0.1
+            SPLATTER_SOUND.play()*/
+        }
+        // Displaying
+        if(this.ripHeart == 80){
+            this.texture = PLAYER_TEXTURE
+            // Play powerup sound
+            // Show beating heart above your hand
+            this.heldHeart = new DisplayHeart(this.position)
+            this.parent.addChild(this.heldHeart, 0)
+            GAINUP_SOUND.currentTime = 0
+            GAINUP_SOUND.volume = 0.1
+            GAINUP_SOUND.play()
+        }
+        // Beating
+        if(this.ripHeart > 80){
+            this.heldHeart.scale.x = 1.5 - 0.3 * Math.sin( 4*(6.283/120) * (this.ripHeart - 80) )
+            this.heldHeart.scale.y = 1.5 - 0.3 * Math.sin( 4*(6.283/120) * (this.ripHeart - 80) )
+        }
+        // Finishing
+        if(this.ripHeart == 200){
+            this.texture = PLAYER_TEXTURE
+            this.ripHeart = 0
+            this.parent.removeChild(this.heldHeart)
+            this.gainHeart(5)
+        }
+    }
     heartbeat(){
         if(!!Jukebox.currentMusic) {
             if(this.hearts < 10){
@@ -214,6 +272,7 @@ export default class Player extends Pixi.Sprite {
     die() {
         this.isDead = true
         this.tint = 0x333333
+        this.gun.sprite.tint = 0x333333
         this.velocity = Math.PI / 4
 
         DEATH_SOUND.currentTime = 0
@@ -222,6 +281,52 @@ export default class Player extends Pixi.Sprite {
     }
     get stack() {
         return 0
+    }
+}
+
+const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
+const HEART_COLOR = 0xF86795
+
+class DisplayHeart extends Pixi.Sprite {
+    constructor(heroPos) {
+        super(HEART_TEXTURE)
+
+        this.position.x = heroPos.x-16
+        this.position.y = heroPos.y-10
+
+        this.anchor.x = 0.5
+        this.anchor.y = 0.5
+
+        this.direction = 0
+
+        this.rotation = 0
+
+        this.tint = 0x0FFB5CD
+
+        /* // Play Heart-Up Sound
+        SHOOT_SOUND.volume = 0.1
+        SHOOT_SOUND.currentTime = 0
+        SHOOT_SOUND.playbackRate = Math.random() * 0.5 + 0.5
+        SHOOT_SOUND.play()
+        */
+    }
+    update(delta) {
+
+        //this.pulse(delta)
+
+    }
+    pulse(delta) {
+        this.tint = HEART_COLOR
+        // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/3
+
+        if(!!Jukebox.currentMusic) {
+            var scale = this.getMusicalPulse(Jukebox.currentMusic.currentTime * 1000 % 2000)
+            this.scale.x = scale
+            this.scale.y = scale
+        }
+    }
+    getMusicalPulse(time) {
+        return 1 - (time <= 500 ? 0.2 * Math.sin(time * (6.283/500)) : 0)
     }
 }
 

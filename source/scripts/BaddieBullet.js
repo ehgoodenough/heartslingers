@@ -6,6 +6,8 @@ const GRAB_DISTANCE = 15
 const GRAVITATE_DISTANCE = 50
 const HARM_RADIUS = 20
 
+const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
+const HURT_SOUND = new Audio(require("sounds/hit.wav"))
 const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const SHARD_TEXTURE = Pixi.Texture.from(require("images/shard.png"))
@@ -43,6 +45,10 @@ export default class BaddieBullet extends Pixi.Sprite {
         // been alive, in ms.
         this.time = 0
 
+        SHOOT_SOUND.volume = 0.1
+        SHOOT_SOUND.currentTime = 0
+        SHOOT_SOUND.playbackRate = Math.random() * 0.5 + 0.5
+        //SHOOT_SOUND.play()
         this.velocity = new Pixi.Point()
     }
     update(delta) {
@@ -108,12 +114,9 @@ export default class BaddieBullet extends Pixi.Sprite {
                 this.parent.player.loseHeart(1)
                 this.parent.removeChild(this)
 
-                return // so i don't have to hear the grab sound
-
-                // TODO : Make this a hurting sound
-                GRAB_SOUND.currentTime = 0
-                GRAB_SOUND.volume = 0.1
-                GRAB_SOUND.play()
+                HURT_SOUND.currentTime = 0
+                HURT_SOUND.volume = 0.1
+                HURT_SOUND.play()
             }
         }
     }

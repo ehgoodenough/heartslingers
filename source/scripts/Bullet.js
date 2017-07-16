@@ -9,6 +9,7 @@ const HOOVER_SPEED = 3
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
 const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
+const HURT_SOUND = new Audio(require("sounds/hit.wav"))
 
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xF86795
@@ -131,6 +132,9 @@ export default class Bullet extends Pixi.Sprite {
                     if(child.hearts > 0) {
                         if(getDistance(child.position, this.position) < HARM_RADIUS) {
                             child.loseHeart(this.harm)
+                            HURT_SOUND.currentTime = 0
+                            HURT_SOUND.volume = 0.1
+                            HURT_SOUND.play()
 
                             if(child.isDead != true) {
                                 this.velocity.x = 0
