@@ -44,25 +44,7 @@ export default class Scene extends Pixi.Container {
 
         targetposition.x = this.player.position.x - (FRAME.WIDTH * (1/2))
         targetposition.y = this.player.position.y - (FRAME.HEIGHT * (1/2))
-
-        // Keep the frame locked
-        // within the confines of
-        // the tiled map.
-        if(targetposition.x < 0) {
-            targetposition.x = 0
-        }
-        if(targetposition.y < 0) {
-            targetposition.y = 0
-        }
-        if(this.map) {
-            if(targetposition.x > this.map.width - FRAME.WIDTH) {
-                targetposition.x = this.map.width - FRAME.WIDTH
-            }
-            if(targetposition.y > this.map.height - FRAME.HEIGHT) {
-                targetposition.y = this.map.height - FRAME.HEIGHT
-            }
-        }
-
+        
         // We're going to move
         // the entire scene in
         // the OPPOSITE direction
@@ -81,6 +63,9 @@ export default class Scene extends Pixi.Container {
         if(this.position.y - targetposition.y < 0.1) {
             this.position.y = targetposition.y
         }
+
+        this.position.x = Math.round(this.position.x)
+        this.position.y = Math.round(this.position.y)
     }
     restartScene() {
         if(this.parent instanceof Game) {

@@ -97,8 +97,8 @@ export default class Bullet extends Pixi.Sprite {
 
         this.distance -= this.speed
 
-        this.velocity.x = Math.sin(this.direction) * this.speed
-        this.velocity.y = Math.cos(this.direction) * this.speed
+        this.velocity.x = Math.cos(this.direction) * this.speed
+        this.velocity.y = Math.sin(this.direction) * this.speed
         this.velocity.r = (Math.PI / 32) * this.speed
 
         if(this.parent && this.parent.map) {
@@ -114,6 +114,8 @@ export default class Bullet extends Pixi.Sprite {
                             child.loseHeart(this.harm)
 
                             if(child.isDead != true) {
+                                this.velocity.x = 0
+                                this.velocity.y = 0
                                 this.speed = 0
                             }
                         }

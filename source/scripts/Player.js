@@ -1,7 +1,7 @@
 import * as Pixi from "pixi.js"
 import Keyb from "keyb"
 
-import {getVectorLength} from "scripts/Geometry.js"
+import {getVectorLength, getDirection} from "scripts/Geometry.js"
 import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 import Scene from "scripts/Scene.js"
@@ -48,15 +48,16 @@ export default class Player extends Pixi.Sprite {
             cooldown: 0,
         }
 
-        this.hearts = 25
+        this.hearts = 50
 
-        this.addChild(new Gun())
+        this.addChild(this.gun.sprite = new Gun())
     }
     update(delta) {
         if(this.isDead) {
             this.spinWhenDead(delta)
         } else {
             this.move(delta)
+            this.gun.sprite.update(delta)
             this.shoot(delta)
         }
     }
@@ -115,6 +116,9 @@ export default class Player extends Pixi.Sprite {
         // Translation of position by velocity.
         this.position.x += this.velocity.x * delta.f
         this.position.y += this.velocity.y * delta.f
+
+        this.position.x = Math.round(this.position.x)
+        this.position.y = Math.round(this.position.y)
     }
     shoot(delta) {
         if(this.gun.cooldown > 0) {
@@ -122,7 +126,7 @@ export default class Player extends Pixi.Sprite {
         }
 
         // If the user is holding the shoot key...
-        if(Keyb.isDown("<space>")) {
+        if(Keyb.isDown("<space>") || mouse.isDown) {
             // And the gun has cooled down...
             if(this.gun.cooldown <= 0) {
                 // Then heat up the gun again!
@@ -132,7 +136,7 @@ export default class Player extends Pixi.Sprite {
                 if(this.parent != undefined) {
                     this.parent.addChild(new Bullet({
                         position: this.position,
-                        direction: 180 * Math.DEG_TO_RAD
+                        direction: this.gun.sprite.rotation
                     }), 0)
                 }
 
@@ -196,7 +200,7 @@ export default class Player extends Pixi.Sprite {
     }
 }
 
-const GUN_TEXTURE = Pixi.Texture.from(require("images/pixel.png"))
+const GUN_TEXTURE = Pixi.Texture.from(require("images/gun.png"))
 
 class Gun extends Pixi.Sprite {
     constructor() {
@@ -205,10 +209,31 @@ class Gun extends Pixi.Sprite {
         this.anchor.x = 0
         this.anchor.y = 0.5
 
-        this.tint = 0x222222
-
-        this.width = 20
-        this.height = 10
-        this.rotation = Math.PI / 4
+        this.rotation = 0
+    }
+    update(delta) {
+        this.rotation = mouse.direction
+        if(this.rotation > Math.PI / +2
+        || this.rotation < Math.PI / -2) {
+            this.scale.y = -1
+        } else {
+            this.scale.y = +1
+        }
     }
 }
+
+var mouse = {direction: 0, position: {x: 0, y: 0}}
+
+document.addEventListener("mousemove", function(event) {
+    mouse.position.x = event.clientX
+    mouse.position.y = event.clientY
+    var center = {x: window.innerWidth / 2, y: window.innerHeight / 2}
+    mouse.direction = getDirection(center, mouse.position)
+})
+
+document.addEventListener("mousedown", function(event) {
+    mouse.isDown = true
+})
+document.addEventListener("mouseup", function(event) {
+    mouse.isDown = false
+})

@@ -22,7 +22,7 @@ export const STAGE = stage
 ///////////////////
 
 export const FRAME = {
-    WIDTH: 16 * 32,
-    HEIGHT: 9 * 32,
-    COLOR: 0x00BFFE
+    WIDTH: 320,
+    HEIGHT: 320,
+    COLOR: 0x003648
 }

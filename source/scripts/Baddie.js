@@ -21,6 +21,8 @@ export default class Baddie extends Pixi.Sprite {
         this.anchor.x = 0.5
         this.anchor.y = 0.5
 
+        this.tint = 0xFFD200
+
         this.hearts = 5
 
         this.velocity = new Pixi.Point()

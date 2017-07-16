@@ -7,6 +7,10 @@ export default class Map extends Pixi.Graphics {
     constructor() {
         super()
 
+        // The floor
+        this.beginFill(0x00BFFE)
+        this.drawRect(0, 0, MAP.width * MAP.tilewidth, MAP.height * MAP.tileheight)
+
         this.baddies = []
         this.polygons = []
         MAP.layers.forEach((layer) => {
@@ -27,6 +31,7 @@ export default class Map extends Pixi.Graphics {
             }
         })
 
+        // The Walls
         this.beginFill(0x006D91)
         this.polygons.forEach((polygon) => {
             this.drawPolygon(polygon)
@@ -49,7 +54,7 @@ export default class Map extends Pixi.Graphics {
     }
 }
 
-const RAISED = 18
+const RAISED = 10
 
 class MapRaisedLayer extends Pixi.Graphics {
     constructor() {
