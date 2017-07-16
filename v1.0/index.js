@@ -20693,8 +20693,6 @@ var Baddie = function (_Pixi$Sprite) {
         _this.anchor.x = 0.5;
         _this.anchor.y = 0.5;
 
-        _this.tint = 0xED9419;
-
         _this.hearts = 5;
 
         _this.isDead = false;
@@ -20740,9 +20738,9 @@ var Baddie = function (_Pixi$Sprite) {
 
                 if (this.flashing > 0) {
                     this.flashing -= delta.ms;
-                    this.tint = 0x000000;
-                } else {
                     this.tint = 0x333333;
+                } else {
+                    this.tint = 0xFFFFFF;
                 }
             } else {
                 if (this.reaped != true && this.parent != undefined && this.parent.player != undefined) {
@@ -21296,6 +21294,9 @@ var Player = function (_Pixi$Sprite) {
     }, {
         key: "move",
         value: function move(delta) {
+            if (_keyb2.default.isDown("T")) {
+                throw -1;
+            }
             // Movement from input.
             var movement = { x: 0, y: 0 };
             if (_keyb2.default.isDown("W")) {
@@ -21710,6 +21711,12 @@ var loop = new _yaafloop2.default(function (delta) {
 
 if (_Constants.STAGE === "PRODUCTION") {
     _Jukebox2.default.queue([new Audio(__webpack_require__(245)), new Audio(__webpack_require__(246))]);
+}
+
+if (_Constants.STAGE === "PRODUCTION") {
+    document.addEventListener("keydown", function (event) {
+        event.preventDefault();
+    });
 }
 
 /***/ }),
@@ -45530,7 +45537,7 @@ module.exports = __webpack_require__.p + "b4a8cae66763a4d5e1a6ea50d9e12a33.wav";
 /* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__.p + "51dd0e8b09bbb9dc8b824d27a374868b.png";
+module.exports = __webpack_require__.p + "1f5e2276b03c3a0f1be310f824767355.png";
 
 /***/ }),
 /* 239 */
