@@ -14,7 +14,7 @@ const MOVING_RISETIME  = 5 // in ticks (=1/60 of a second)
 const GUN_COOLDOWN = 150 // in milliseconds
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
-const PLAYER_TEXTURE = Pixi.Texture.from(require("images/HeartyArmfree.png"))
+const PLAYER_TEXTURE = Pixi.Texture.from(require("images/HeartyFist.png"))
 
 const DEATH_SOUND = new Audio(require("sounds/death.wav"))
 
@@ -143,7 +143,7 @@ export default class Player extends Pixi.Sprite {
                 // And fire a shot.
                 if(this.parent != undefined) {
                     this.parent.addChild(new Bullet({
-                        position: this.position,
+                        position: {x: this.position.x+9, y: this.position.y},
                         direction: this.aimAngle,
                         power: desperation
                     }), 0)
@@ -219,7 +219,7 @@ export default class Player extends Pixi.Sprite {
     }
 }
 
-const GUN_TEXTURE = Pixi.Texture.from(require("images/HeartGunHand.png"))
+const GUN_TEXTURE = Pixi.Texture.from(require("images/ArmCannon.png"))
 
 class Gun extends Pixi.Sprite {
     constructor() {
@@ -228,8 +228,8 @@ class Gun extends Pixi.Sprite {
         this.anchor.x = 0
         this.anchor.y = 0.5
 
-        this.position.x = -9
-        this.position.y = 5
+        this.position.x = 12
+        this.position.y = 0
 
         this.rotation = 0
     }
