@@ -154,4 +154,7 @@ export default class Bullet extends Pixi.Sprite {
             }
         }
     }
+    get stack() {
+        return -1
+    }
 }

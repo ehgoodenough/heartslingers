@@ -7,8 +7,8 @@ export default class Map extends Pixi.Graphics {
     constructor() {
         super()
 
-        this.polygons = []
         this.baddies = []
+        this.polygons = []
         MAP.layers.forEach((layer) => {
             if(layer.type == "objectgroup") {
                 layer.objects.forEach((object) => {
@@ -27,10 +27,12 @@ export default class Map extends Pixi.Graphics {
             }
         })
 
-        this.beginFill(0x003648)
+        this.beginFill(0x006D91)
         this.polygons.forEach((polygon) => {
             this.drawPolygon(polygon)
         })
+
+        this.raisedLayer = new MapRaisedLayer()
     }
     handlePotentialCollisions(position, velocity) {
         this.polygons.forEach((polygon) => {
@@ -41,5 +43,31 @@ export default class Map extends Pixi.Graphics {
                 velocity.y = 0
             }
         })
+    }
+    get stack() {
+        return -100
+    }
+}
+
+const RAISED = 18
+
+class MapRaisedLayer extends Pixi.Graphics {
+    constructor() {
+        super()
+        this.beginFill(0x003648)
+        MAP.layers.forEach((layer) => {
+            if(layer.type == "objectgroup") {
+                layer.objects.forEach((object) => {
+                    if(!!object.polygon) {
+                        this.drawPolygon(object.polygon.map((point) => {
+                            return new Pixi.Point(object.x + point.x, object.y + point.y - RAISED)
+                        }))
+                    }
+                })
+            }
+        })
+    }
+    get stack() {
+        return 100
     }
 }

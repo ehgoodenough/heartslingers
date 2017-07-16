@@ -3,7 +3,6 @@ import * as Pixi from "pixi.js"
 import Game from "scripts/Game.js"
 import Map from "scripts/Map.js"
 import Player from "scripts/Player.js"
-import HeartBar from "scripts/HeartBar.js"
 import {FRAME, STAGE} from "scripts/Constants.js"
 
 export default class Scene extends Pixi.Container {
@@ -15,6 +14,20 @@ export default class Scene extends Pixi.Container {
 
         this.map.baddies.forEach((baddie) => {
             this.addChild(baddie)
+        })
+
+        this.addChild(this.map.raisedLayer)
+    }
+    addChild(child) {
+        super.addChild(child)
+        this.children.sort(function(a, b) {
+            if(a.stack < b.stack) {
+                return -1
+            } else if(a.stack > b.stack) {
+                return +1
+            } else {
+                return 0
+            }
         })
     }
     update(delta) {
