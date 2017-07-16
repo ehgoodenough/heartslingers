@@ -8,7 +8,7 @@ export default class Map extends Pixi.Graphics {
         super()
 
         // The floor
-        this.beginFill(0x00BFFE)
+        this.beginFill(0x29A6CF) // Used to be: 0x00BFFE
         this.drawRect(0, 0, MAP.width * MAP.tilewidth, MAP.height * MAP.tileheight)
 
         this.baddies = []

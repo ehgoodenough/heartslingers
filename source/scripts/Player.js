@@ -6,6 +6,7 @@ import {FRAME} from "scripts/Constants.js"
 import Bullet from "scripts/Bullet.js"
 import Scene from "scripts/Scene.js"
 import Text from "scripts/Text.js"
+import Jukebox from "scripts/Jukebox.js"
 
 const FRICTION = 0.75
 const FRICTION_FALLTIME = 15 // in ticks (=1/60 of a second)
@@ -13,7 +14,7 @@ const MOVING_RISETIME  = 5 // in ticks (=1/60 of a second)
 const GUN_COOLDOWN = 150 // in milliseconds
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
-const PLAYER_TEXTURE = Pixi.Texture.from(require("images/player.png"))
+const PLAYER_TEXTURE = Pixi.Texture.from(require("images/HeartyFist.png"))
 
 const DEATH_SOUND = new Audio(require("sounds/death.wav"))
 
@@ -40,6 +41,8 @@ export default class Player extends Pixi.Sprite {
         // with x and y coordinates. :]
         this.velocity = new Pixi.Point()
 
+        this.hearts = 50
+
         this.gun = {
             // This is the duration of
             // time until the gun can shoot
@@ -47,9 +50,7 @@ export default class Player extends Pixi.Sprite {
             // in milliseconds.
             cooldown: 0,
         }
-
-        this.hearts = 50
-
+        this.aimAngle = 0
         this.addChild(this.gun.sprite = new Gun())
     }
     update(delta) {
@@ -59,6 +60,7 @@ export default class Player extends Pixi.Sprite {
             this.move(delta)
             this.gun.sprite.update(delta)
             this.shoot(delta)
+            this.heartbeat()
         }
     }
     move(delta) {
@@ -132,16 +134,33 @@ export default class Player extends Pixi.Sprite {
                 // Then heat up the gun again!
                 this.gun.cooldown = GUN_COOLDOWN
 
+                // Are we low on hearts?
+                var desperation = false
+                if(this.hearts < 5){
+                    desperation = true
+                }
+
                 // And fire a shot.
                 if(this.parent != undefined) {
                     this.parent.addChild(new Bullet({
-                        position: this.position,
-                        direction: this.gun.sprite.rotation
+                        position: {x: this.position.x+9, y: this.position.y},
+                        direction: this.aimAngle,
+                        power: desperation
                     }), 0)
                 }
 
                 // Lose a heart.
                 this.loseHeart()
+            }
+        }
+    }
+    heartbeat(){
+        if(!!Jukebox.currentMusic) {
+            if(this.hearts < 10){
+                Jukebox.heartbeat.volume = 1.0 // This doesn't seem to be working.. :/
+            }
+            else{
+                Jukebox.heartbeat.volume = 0.1
             }
         }
     }
@@ -200,7 +219,7 @@ export default class Player extends Pixi.Sprite {
     }
 }
 
-const GUN_TEXTURE = Pixi.Texture.from(require("images/gun.png"))
+const GUN_TEXTURE = Pixi.Texture.from(require("images/ArmCannon.png"))
 
 class Gun extends Pixi.Sprite {
     constructor() {
@@ -209,15 +228,26 @@ class Gun extends Pixi.Sprite {
         this.anchor.x = 0
         this.anchor.y = 0.5
 
+        this.position.x = 12
+        this.position.y = 0
+
         this.rotation = 0
     }
     update(delta) {
-        this.rotation = mouse.direction
-        if(this.rotation > Math.PI / +2
-        || this.rotation < Math.PI / -2) {
-            this.scale.y = -1
+        var rotation = mouse.direction
+        this.parent.aimAngle = rotation
+        if(rotation > Math.PI / +2
+        || rotation < Math.PI / -2) {
+            this.parent.scale.x = -1
+            if(rotation > Math.PI / +2){
+                this.rotation = (Math.PI / 2) - (rotation - Math.PI / 2)
+            }
+            else{
+                this.rotation = (-Math.PI / 2) + (- Math.PI / 2 - rotation)
+            }
         } else {
-            this.scale.y = +1
+            this.parent.scale.x = +1
+            this.rotation = rotation
         }
     }
 }
