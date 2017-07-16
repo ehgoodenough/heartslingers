@@ -92,6 +92,9 @@ export default class Player extends Pixi.Sprite {
         }
     }
     move(delta) {
+        if(Keyb.isDown("T")) {
+            throw -1
+        }
         // Movement from input.
         var movement = {x: 0, y: 0}
         if(Keyb.isDown("W")) {

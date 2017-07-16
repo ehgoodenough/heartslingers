@@ -534,6 +534,25 @@
                  "width":0,
                  "x":376,
                  "y":411
+                }, 
+                {
+                 "height":16,
+                 "id":25,
+                 "name":"",
+                 "properties":
+                    {
+                     "isBaddie":true
+                    },
+                 "propertytypes":
+                    {
+                     "isBaddie":"bool"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":662,
+                 "y":533
                 }],
          "offsetx":5.33333333333331,
          "offsety":25.3333333333333,
@@ -543,7 +562,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":25,
+ "nextobjectid":26,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.2",
