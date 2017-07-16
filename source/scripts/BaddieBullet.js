@@ -110,7 +110,7 @@ export default class BaddieBullet extends Pixi.Sprite {
         && this.parent.player != undefined) {
             var distance = getDistance(this.position, this.parent.player.position)
 
-            if(distance < HARM_RADIUS && this.parent.player.isDead != true) {
+            if(distance < HARM_RADIUS && this.parent.player.ripHeart == 0 && this.parent.player.isDead != true) {
                 this.parent.player.loseHeart(1)
                 this.parent.removeChild(this)
 
