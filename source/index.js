@@ -24,4 +24,10 @@ if(STAGE === "PRODUCTION") {
     ])
 }
 
+if(STAGE === "PRODUCTION") {
+    document.addEventListener("keydown", function(event) {
+        event.preventDefault()
+    })
+}
+
 import * as Pixi from "pixi.js"
