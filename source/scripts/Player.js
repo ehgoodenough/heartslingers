@@ -83,16 +83,16 @@ export default class Player extends Pixi.Sprite {
     move(delta) {
         // Movement from input.
         var movement = {x: 0, y: 0}
-        if(Keyb.isDown("<up>") || Keyb.isDown("W")) {
+        if(Keyb.isDown("W")) {
             movement.y = -1
         }
-        if(Keyb.isDown("<down>") || Keyb.isDown("S")) {
+        if(Keyb.isDown("S")) {
             movement.y = +1
         }
-        if(Keyb.isDown("<left>") || Keyb.isDown("A")) {
+        if(Keyb.isDown("A")) {
             movement.x = -1
         }
-        if(Keyb.isDown("<right>") || Keyb.isDown("D")) {
+        if(Keyb.isDown("D")) {
             movement.x = +1
         }
         // Normalize the unit vector
@@ -145,7 +145,9 @@ export default class Player extends Pixi.Sprite {
         }
 
         // If the user is holding the shoot key...
-        if(Keyb.isDown("<space>") || mouse.isDown) {
+        if(Keyb.isDown("<space>") || mouse.isDown
+        || Keyb.isDown("<up>") || Keyb.isDown("<down>")
+        || Keyb.isDown("<left>") || Keyb.isDown("<right>")) {
             // And the gun has cooled down...
             if(this.gun.cooldown <= 0) {
                 // Then heat up the gun again!
@@ -347,7 +349,22 @@ class Gun extends Pixi.Sprite {
     }
     update(delta) {
         var rotation = mouse.direction
+
+        if(Keyb.isDown("<up>")) {
+            rotation = Math.PI * 1.5
+        }
+        if(Keyb.isDown("<down>")) {
+            rotation = Math.PI * 0.5
+        }
+        if(Keyb.isDown("<left>")) {
+            rotation = Math.PI
+        }
+        if(Keyb.isDown("<right>")) {
+            rotation = Math.PI * 2
+        }
+
         this.parent.aimAngle = rotation
+
         if(rotation > Math.PI / +2
         || rotation < Math.PI / -2) {
             this.parent.scale.x = -1
