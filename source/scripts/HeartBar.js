@@ -2,12 +2,12 @@ import * as Pixi from "pixi.js"
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
 import {FRAME} from "scripts/Constants.js"
+import Text from "scripts/Text.js"
 
 const UNDERLAY_TEXTURE = Pixi.Texture.from(require("images/heart-bar-underlay.png"))
 const OVERLAY_TEXTURE = Pixi.Texture.from(require("images/heart-bar-overlay.png"))
 
 const BAR_MARGIN = 8 // in pixels
-const BAR_LENGTH = 100 // in hearts
 
 export default class HeartBar extends Pixi.Container {
     constructor() {
@@ -21,6 +21,11 @@ export default class HeartBar extends Pixi.Container {
 
         this.underlay.anchor.y = 1
         this.overlay.anchor.y = 1
+
+        // TODO: replace this with an active counter of your hearts: 15/15 etc.
+        this.addChild(this.text = new Text("YOUR LIFE IS YOUR AMMO"))
+        this.text.position.x = FRAME.WIDTH / 2
+        this.text.position.y = -16
     }
     update(delta) {
         this.resizeOverlays()
@@ -46,7 +51,7 @@ export default class HeartBar extends Pixi.Container {
         }
 
         // Calculate the percentage.
-        var percentage = this.parent.scene.player.hearts / BAR_LENGTH
+        var percentage = this.parent.scene.player.hearts / this.parent.scene.player.maxhearts
 
         // Don't let the percentage fall below 0%.
         percentage = Math.max(percentage, 0)

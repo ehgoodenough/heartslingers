@@ -8,9 +8,13 @@ import BaddieBullet from "scripts/BaddieBullet.js"
 import Scene from "scripts/Scene.js"
 import Text from "scripts/Text.js"
 
+const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
+
 const BADDIE_TEXTURE = Pixi.Texture.from(require("images/player.png"))
 const DEATH_SOUND = new Audio(require("sounds/explosion.wav"))
-const GUN_COOLDOWN = 150 // in milliseconds
+const SHORT_GUN_COOLDOWN = 50 // in milliseconds
+const LONG_GUN_COOLDOWN = 750 // in milliseconds
+const EVERY_NTH_SHOT = 2
 
 const ROTATIONAL_FRICTION = 0.95
 
@@ -35,6 +39,13 @@ export default class Baddie extends Pixi.Sprite {
             // another shot. This time is
             // in milliseconds.
             cooldown: 0,
+            // This is a counter of how
+            // many times this gun has shot.
+            // We use this to determine how
+            // long to cooldown for, since
+            // every fourth shot requires
+            // a longer cooldown.
+            shots: 0,
         }
         this.addChild(this.gun.sprite = new Blaster())
 
@@ -67,14 +78,25 @@ export default class Baddie extends Pixi.Sprite {
         if(true) {
             // And the gun has cooled down...
             if(this.gun.cooldown <= 0) {
-                // Then heat up the gun again!
-                this.gun.cooldown = GUN_COOLDOWN
+                this.gun.shots += 1
+
+                if(this.gun.shots % EVERY_NTH_SHOT == 0) {
+                    this.gun.cooldown = LONG_GUN_COOLDOWN
+                } else {
+                    this.gun.cooldown = SHORT_GUN_COOLDOWN
+                }
 
                 // ...then fire the shot!
                 if(this.parent != undefined) {
+                    // SHOOT_SOUND.volume = 1 - Math.max(Math.min(getDistance(this.position, this.parent.player.position) / 300, 1), 0)
+                    // SHOOT_SOUND.playbackRate = Math.random() * 0.5 + 0.5
+                    // SHOOT_SOUND.currentTime = 0
+                    // SHOOT_SOUND.play()
+
                     this.parent.addChild(new BaddieBullet({
                         position: this.position,
-                        direction: this.gun.sprite.rotation
+                        direction: this.gun.sprite.rotation,
+                        distance: 200
                     }), 0)
                 }
             }
@@ -138,9 +160,20 @@ class Blaster extends Pixi.Sprite {
         if(this.parent.parent != undefined
         && this.parent.parent.player != undefined) {
             var playerPos = this.parent.parent.player.position
-            var targetAngle = Math.atan2(playerPos.y-this.parent.position.y,playerPos.x-this.parent.position.x)
-            this.rotation += 0.05*(targetAngle-this.rotation)
+            var targetRotation = Math.atan2(playerPos.y-this.parent.position.y,playerPos.x-this.parent.position.x)
+
+            this.rotation = targetRotation
+            // this.rotation += 0.05 * (targetRotation - this.rotation)
+
+            // // Hmmm.. This didn't work :<
+            // // https://stackoverflow.com/questions/4370746/calculate-the-shortest-way-to-rotate-right-or-left
+            // if((targetRotation + (Math.PI*2)) % (Math.PI*2) > Math.PI) {
+            //     this.rotation += this.rotationSpeed
+            // } else {
+            //     this.rotation -= this.rotationSpeed
+            // }
         }
+
         // Flip the gun if necessary
         if(this.rotation > Math.PI / +2
         || this.rotation < Math.PI / -2) {

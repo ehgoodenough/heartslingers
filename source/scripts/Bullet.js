@@ -12,7 +12,7 @@ const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xF86795
-const HEART_SLOWDOWN_DISTANCE = 50
+const HEART_SLOWDOWN_DISTANCE = 100
 
 import {getDistance,getVectorLength} from "scripts/Geometry.js"
 import Jukebox from "scripts/Jukebox.js"
