@@ -49,6 +49,8 @@ export default class Player extends Pixi.Sprite {
         }
 
         this.hearts = 25
+
+        this.addChild(new Gun())
     }
     update(delta) {
         if(this.isDead) {
@@ -193,5 +195,22 @@ export default class Player extends Pixi.Sprite {
     }
     get stack() {
         return 0
+    }
+}
+
+const GUN_TEXTURE = Pixi.Texture.from(require("images/pixel.png"))
+
+class Gun extends Pixi.Sprite {
+    constructor() {
+        super(GUN_TEXTURE)
+
+        this.anchor.x = 0
+        this.anchor.y = 0.5
+
+        this.tint = 0x222222
+
+        this.width = 20
+        this.height = 10
+        this.rotation = Math.PI / 4
     }
 }
