@@ -37,9 +37,11 @@ export default class Scene extends Pixi.Container {
     }
     update(delta) {
         // mutate delta to do slow-mo during animations
+        /*
         if(this.player.ripHeart > 0){
             delta = delta * 0.2
         }
+        */
 
         this.children.forEach((child) => {
             if(child.update instanceof Function) {
