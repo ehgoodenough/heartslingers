@@ -33,8 +33,6 @@ export default class Baddie extends Pixi.Sprite {
         this.anchor.x = 0.5
         this.anchor.y = 0.5
 
-        this.tint = 0xED9419
-
         this.hearts = 5
 
         this.isDead = false
@@ -76,9 +74,9 @@ export default class Baddie extends Pixi.Sprite {
 
             if(this.flashing > 0) {
                 this.flashing -= delta.ms
-                this.tint = 0x000000
-            } else {
                 this.tint = 0x333333
+            } else {
+                this.tint = 0xFFFFFF
             }
         }
         else{
