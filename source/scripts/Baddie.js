@@ -193,6 +193,12 @@ class Blaster extends Pixi.Sprite {
         && this.parent.parent.player != undefined) {
             var playerPos = this.parent.parent.player.position
             var targetRotation = Math.atan2(playerPos.y-this.parent.position.y,playerPos.x-this.parent.position.x)
+            if(this.rotation > Math.PI / +2 && targetRotation < Math.PI / -2) {
+              targetRotation += 2*Math.PI
+            }
+            if(this.rotation < Math.PI / -2 && targetRotation > Math.PI / +2) {
+              targetRotation -= 2*Math.PI
+            }
             this.rotation += 0.05*(targetRotation-this.rotation)
         }
         // Flip the gun if necessary
