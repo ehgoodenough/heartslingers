@@ -73,6 +73,13 @@ export default class Baddie extends Pixi.Sprite {
         if(this.isDead == false) {
             this.shoot(delta)
             this.gun.sprite.update(delta)
+
+            if(this.flashing > 0) {
+                this.flashing -= delta.ms
+                this.tint = 0x000000
+            } else {
+                this.tint = 0x333333
+            }
         }
         else{
             if(this.reaped != true
@@ -122,6 +129,7 @@ export default class Baddie extends Pixi.Sprite {
     loseHeart(amount) {
         amount = amount || 1
         this.hearts -= amount
+        this.flashing = 100
         if(this.hearts <= 0) {
             this.hearts = 0
             this.die()
