@@ -1,7 +1,7 @@
 const DEFAULT_VOLUME = 0.1
 
 export default class Jukebox {
-    constructor(music) {
+    static queue(music) {
         if(music instanceof Array == false) {
             music = new Array(music)
         }
@@ -16,18 +16,22 @@ export default class Jukebox {
         })
 
         this.heartbeat = new Audio(require("music/Heartbeatss.mp3"))
-        this.heartbeat.volume = DEFAULT_VOLUME 
+        this.heartbeat.volume = DEFAULT_VOLUME
         this.heartbeat.loop = true
 
         this.play()
     }
-    play() {
+    static play() {
         if(this.music.length > 0) {
             var music = this.music.shift()
+            this.music.push(music)
+
             console.log("Playing", music.src)
+
             music.play()
             this.heartbeat.play()
-            this.music.push(music)
+
+            this.currentMusic = music
         }
     }
 }

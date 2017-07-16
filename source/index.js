@@ -18,7 +18,7 @@ var loop = new Yaafloop(function(delta) {
 })
 
 if(STAGE === "PRODUCTION") {
-    var jukebox = new Jukebox([
+    Jukebox.queue([
         new Audio(require("music/Heart-of-Stone.mp3")),
         new Audio(require("music/PUT-YOUR-HEAART-INTO-IT.mp3")),
     ])

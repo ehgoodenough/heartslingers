@@ -40,8 +40,6 @@ export default class Player extends Pixi.Sprite {
         // with x and y coordinates. :]
         this.velocity = new Pixi.Point()
 
-        this.heartStart = Date.now()
-
         this.gun = {
             // This is the duration of
             // time until the gun can shoot
@@ -108,9 +106,8 @@ export default class Player extends Pixi.Sprite {
             this.velocity.y *= (this.speed / speed)
         }
 
-        if(this.parent
-        && this.parent.tiledmap) {
-            this.parent.tiledmap.handlePotentialCollisions(this.position, this.velocity)
+        if(this.parent && this.parent.map) {
+            this.parent.map.handlePotentialCollisions(this.position, this.velocity)
         }
 
         // Translation of position by velocity.
@@ -133,8 +130,7 @@ export default class Player extends Pixi.Sprite {
                 if(this.parent != undefined) {
                     this.parent.addChildAt(new Bullet({
                         position: this.position,
-                        direction: 180 * Math.DEG_TO_RAD,
-                        start: this.heartStart
+                        direction: 180 * Math.DEG_TO_RAD
                     }), 0)
                 }
 
@@ -155,8 +151,6 @@ export default class Player extends Pixi.Sprite {
         if(this.velocity === 0) {
             if(this.isTrulyDead != true) {
                 this.isTrulyDead = true
-
-                this.tint = 0x333333
 
                 if(this.parent != undefined) {
                     var text = new Text("Hit R to restart")
@@ -187,10 +181,11 @@ export default class Player extends Pixi.Sprite {
     }
     die() {
         this.isDead = true
+        this.tint = 0x333333
         this.velocity = Math.PI / 4
 
-        DEATH_SOUND.volume = 0.1
         DEATH_SOUND.currentTime = 0
+        DEATH_SOUND.volume = 0.1
         DEATH_SOUND.play()
     }
 }

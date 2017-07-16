@@ -1,6 +1,7 @@
 import * as Pixi from "pixi.js"
 
 import Game from "scripts/Game.js"
+import Map from "scripts/Map.js"
 import Player from "scripts/Player.js"
 import Baddie from "scripts/Baddie.js"
 import HeartBar from "scripts/HeartBar.js"
@@ -10,9 +11,11 @@ export default class Scene extends Pixi.Container {
     constructor() {
         super()
 
-        this.addChild(this.tiledmap = new Tiledmap())
+        this.addChild(this.map = new Map())
         this.addChild(this.player = new Player())
-        this.addChild(this.baddie = new Baddie())
+        this.addChild(this.baddie = new Baddie({
+            position: {x: 100, y: 50}
+        }))
     }
     update(delta) {
         this.children.forEach((child) => {
@@ -35,8 +38,11 @@ export default class Scene extends Pixi.Container {
         if(targetposition.x < 0) {
             targetposition.x = 0
         }
-        if(targetposition.x > this.tiledmap.width - FRAME.WIDTH) {
-            targetposition.x = this.tiledmap.width - FRAME.WIDTH
+
+        if(this.map) {
+            if(targetposition.x > this.map.width - FRAME.WIDTH) {
+                targetposition.x = this.map.width - FRAME.WIDTH
+            }
         }
 
         // We're going to move
@@ -69,39 +75,5 @@ export default class Scene extends Pixi.Container {
             this.parent.addChildAt(this.parent.scene, 0)
             this.parent.removeChild(this)
         }
-    }
-}
-
-import tiledmap from "maps/1.json"
-
-class Tiledmap extends Pixi.Graphics {
-    constructor() {
-        super()
-
-        this.polygons = []
-        tiledmap.layers.forEach((layer) => {
-            layer.objects.forEach((object) => {
-                if(!!object.polygon) {
-                    this.polygons.push(new Pixi.Polygon(object.polygon.map((point) => {
-                        return new Pixi.Point(object.x + point.x, object.y + point.y)
-                    })))
-                }
-            })
-        })
-
-        this.beginFill(0x003648)
-        this.polygons.forEach((polygon) => {
-            this.drawPolygon(polygon)
-        })
-    }
-    handlePotentialCollisions(position, velocity) {
-        this.polygons.forEach((polygon) => {
-            if(polygon.contains(position.x + velocity.x, position.y)) {
-                velocity.x = 0
-            }
-            if(polygon.contains(position.x + velocity.x, position.y + velocity.y)) {
-                velocity.y = 0
-            }
-        })
     }
 }

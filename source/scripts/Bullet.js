@@ -3,15 +3,17 @@ Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
 const FRICTION = 0.9
 const GRAB_DISTANCE = 15
+const GRAVITATE_DISTANCE = 50
 const HARM_RADIUS = 20
 
 const SHOOT_SOUND = new Audio(require("sounds/shoot.wav"))
-const PICKUP_SOUND = new Audio(require("sounds/pickup.wav"))
+const GRAB_SOUND = new Audio(require("sounds/pickup.wav"))
 
 const HEART_TEXTURE = Pixi.Texture.from(require("images/heart.png"))
 const HEART_COLOR = 0xFC2E6C
 
 import {getDistance} from "scripts/Geometry.js"
+import Jukebox from "scripts/Jukebox.js"
 import Baddie from "scripts/Baddie.js"
 
 export default class Bullet extends Pixi.Sprite {
@@ -33,8 +35,6 @@ export default class Bullet extends Pixi.Sprite {
 
         this.harm = 1
 
-        this.startBeat = protobullet.start || 0
-
         // The duration of time
         // that this bullet has
         // been alive, in ms.
@@ -44,6 +44,8 @@ export default class Bullet extends Pixi.Sprite {
         SHOOT_SOUND.currentTime = 0
         SHOOT_SOUND.playbackRate = Math.random() * 0.5 + 0.5
         SHOOT_SOUND.play()
+
+        this.velocity = new Pixi.Point()
     }
     update(delta) {
         this.time += delta.ms
@@ -52,8 +54,27 @@ export default class Bullet extends Pixi.Sprite {
             this.move(delta)
             this.collideWithBaddies()
         } else {
-            this.pulseColor(delta)
+            this.pulse(delta)
             this.gravitateTowardsPlayer()
+        }
+
+        this.position.x += this.velocity.x * delta.f || 0
+        this.position.y += this.velocity.y * delta.f || 0
+        this.rotation += this.velocity.r * delta.f || 0
+
+        this.velocity.x *= FRICTION
+        if(this.velocity.x <= 0.05) {
+            this.velocity.x = 0
+        }
+
+        this.velocity.y *= FRICTION
+        if(this.velocity.y <= 0.05) {
+            this.velocity.y = 0
+        }
+
+        this.velocity.r *= FRICTION
+        if(this.velocity.r <= 0.0005) {
+            this.velocity.r = 0
         }
     }
     move(delta) {
@@ -74,63 +95,62 @@ export default class Bullet extends Pixi.Sprite {
             this.speed = 0
         }
 
-        this.distance -= this.speed * delta.f
+        this.distance -= this.speed
 
-        this.velocity = new Pixi.Point()
-        this.velocity.x = Math.sin(this.direction) * this.speed * delta.f
-        this.velocity.y = Math.cos(this.direction) * this.speed * delta.f
+        this.velocity.x = Math.sin(this.direction) * this.speed
+        this.velocity.y = Math.cos(this.direction) * this.speed
+        this.velocity.r = (Math.PI / 32) * this.speed
 
-        if(this.parent && this.parent.tiledmap) {
-            this.parent.tiledmap.handlePotentialCollisions(this.position, this.velocity)
+        if(this.parent && this.parent.map) {
+            this.parent.map.handlePotentialCollisions(this.position, this.velocity)
         }
-
-        this.position.x += this.velocity.x
-        this.position.y += this.velocity.y
-
-        this.rotation -= (Math.PI / 32) * this.speed
     }
     collideWithBaddies() {
-        // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/4
         if(this.parent != undefined) {
             this.parent.children.forEach((child) => {
                 if(child instanceof Baddie) {
-                    if(getDistance(child.position,this.position) < HARM_RADIUS && child.hearts > 0){
-                        child.loseHeart(this.harm)
-                        this.speed = 0
+                    if(child.hearts > 0) {
+                        if(getDistance(child.position, this.position) < HARM_RADIUS) {
+                            child.loseHeart(this.harm)
+
+                            if(child.isDead != true) {
+                                this.speed = 0
+                            }
+                        }
                     }
                 }
             })
         }
     }
-    pulseColor(delta) {
+    pulse(delta) {
         this.tint = HEART_COLOR
         // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/3
-        var scale = this.heartPulse( (Date.now() - this.startBeat)%2000 )
-        this.scale.x = scale
-        this.scale.y = scale
+
+        if(!!Jukebox.currentMusic) {
+            var scale = this.getMusicalPulse(Jukebox.currentMusic.currentTime * 1000 % 2000)
+            this.scale.x = scale
+            this.scale.y = scale
+        }
     }
-    heartPulse(time) {
-      var h
-      if(time > 500){
-          h = 1
-      }
-      else{
-          h = 1 - 0.2*Math.sin( time * (6.283/500) )
-      }
-      return(h)
+    getMusicalPulse(time) {
+        return 1 - (time <= 500 ? 0.2 * Math.sin(time * (6.283/500)) : 0)
     }
     gravitateTowardsPlayer() {
         if(this.parent != undefined
         && this.parent.player != undefined) {
-            // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/5
+            var distance = getDistance(this.position, this.parent.player.position)
 
-            if(getDistance(this.position, this.parent.player.position) < GRAB_DISTANCE) {
+            if(distance < GRAVITATE_DISTANCE) {
+                // TODO: https://github.com/ehgoodenough/gmtk-2017/issues/5
+            }
+
+            if(distance < GRAB_DISTANCE) {
                 this.parent.player.gainHeart()
                 this.parent.removeChild(this)
 
-                PICKUP_SOUND.volume = 0.1
-                PICKUP_SOUND.currentTime = 0
-                PICKUP_SOUND.play()
+                GRAB_SOUND.currentTime = 0
+                GRAB_SOUND.volume = 0.1
+                GRAB_SOUND.play()
             }
         }
     }
